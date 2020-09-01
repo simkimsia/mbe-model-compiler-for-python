@@ -606,12 +606,12 @@ public class MMClass {
 		//   none
 		// guarantees
 		//   the Java source code for a CIM/PIM class has been emitted, presumably into the designated file			
-			String outputJALFileName = Context.model().javaSourceCodePath() + NameService.asClassLevelName( name ) + ".java";
+			String outputJALFileName = Context.model().javaSourceCodePath() + NameService.asClassLevelName( name ) + ".py";
 			System.out.println( "--compiling: " + outputJALFileName );
-			JavaOutput.openJALOutputFile( outputJALFileName );
-			JavaOutput.indentNone();
+			PythonOutput.openJALOutputFile( outputJALFileName );
+			PythonOutput.indentNone();
 			this.ruleJavaClassFrame();
-			JavaOutput.closeJALOutputFile();
+			PythonOutput.closeJALOutputFile();
 			System.out.println( "--done compiling: " + outputJALFileName );
 			System.out.println();
 		}
@@ -642,21 +642,21 @@ public class MMClass {
 		//   the code for a Meta-model CIM/PIM class have been emitted
 			Context.setMMClass( this );
 			if( Context.model().includePackageName() ) {
-				JavaOutput.indent();
-				JavaOutput.println("package " + NameService.asClassLevelName( Context.model().name() ) + ";" );
-				JavaOutput.println( "" );
+				PythonOutput.indent();
+				PythonOutput.println("package " + NameService.asClassLevelName( Context.model().name() ) + ";" );
+				PythonOutput.println( "" );
 			}
 			this.rulePIMImportsList();
-			JavaOutput.indent();
-			JavaOutput.println( "public class " + NameService.asClassLevelName( name ) + " {" );
-			JavaOutput.println( "" );
-			JavaOutput.indentMore();
+			PythonOutput.indent();
+			PythonOutput.println( "public class " + NameService.asClassLevelName( name ) + " {" );
+			PythonOutput.println( "" );
+			PythonOutput.indentMore();
 			DateFormat aDateFormat = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
 			String todayString = aDateFormat.format( new Date() );
-			JavaOutput.indent();
-			JavaOutput.println( "// generated " + todayString + " by JAL open model compiler " + ModelCompiler.versionId );
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.indent();
+			PythonOutput.println( "// generated " + todayString + " by JAL open model compiler " + ModelCompiler.versionId );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 			this.ruleClassDescription();
 			this.rulePIMConstantsList();
 			this.ruleStateEnumDeclaration();
@@ -678,10 +678,10 @@ public class MMClass {
 			this.rulePIMHelperCode();
 			this.ruleAllMembersAccessor();
 			this.ruleAssociationLinkUnlinkServices();
-			JavaOutput.indentLess();
-			JavaOutput.println( "}" );
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.indentLess();
+			PythonOutput.println( "}" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 			Context.clearMMClass();
 		}
 
@@ -700,13 +700,13 @@ public class MMClass {
 		//   none
 		// guarantees
 		//   the set of standard and PIM class-specific imports have been emitted
-			JavaOutput.indent();
-			JavaOutput.println( "import java.util.ArrayList;" );
+			PythonOutput.indent();
+			PythonOutput.println( "import java.util.ArrayList;" );
 			for( String anImportStatement: pIMImportSet ) {
-				JavaOutput.indent();
-				JavaOutput.println( "import " + anImportStatement + ";" );
+				PythonOutput.indent();
+				PythonOutput.println( "import " + anImportStatement + ";" );
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleClassDescription() {
@@ -717,15 +717,15 @@ public class MMClass {
 		// guarantees
 		//   the class description text has been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Class description" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
-				JavaOutput.indent();
-				JavaOutput.println( "// " + description );
-				JavaOutput.indentLess();
-				JavaOutput.println( "" );
-				JavaOutput.println( "" );
+				PythonOutput.indent();
+				PythonOutput.println( "// Class description" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// " + description );
+				PythonOutput.indentLess();
+				PythonOutput.println( "" );
+				PythonOutput.println( "" );
 			}
 		}
 		
@@ -748,30 +748,30 @@ public class MMClass {
 		// guarantees
 		//   the set of PIM class-specific constants have been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// PIM constants" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// PIM constants" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !pIMConstantSet.isEmpty() ) {
 					for( String aConstantStatement: pIMConstantSet ) {
-						JavaOutput.indent();
-						JavaOutput.println( aConstantStatement + ";" );
+						PythonOutput.indent();
+						PythonOutput.println( aConstantStatement + ";" );
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( String aConstantStatement: pIMConstantSet ) {
-					JavaOutput.indent();
-					JavaOutput.println( aConstantStatement + ";" );
+					PythonOutput.indent();
+					PythonOutput.println( aConstantStatement + ";" );
 				}
 			}
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 		
 		public void ruleStateEnumDeclaration() {
@@ -788,12 +788,12 @@ public class MMClass {
 		//   none
 		// guarantees
 		//   the state enum declaration for this class has been emitted
-			JavaOutput.indent();
-			JavaOutput.print( "public enum " + this.stateAttributeEnumRTType() + " { " );
+			PythonOutput.indent();
+			PythonOutput.print( "public enum " + this.stateAttributeEnumRTType() + " { " );
 			this.ruleStateEnumList();
-			JavaOutput.println( " };" );
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( " };" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleStateEnumList() {
@@ -814,9 +814,9 @@ public class MMClass {
 			Iterator<State> stateIterator = stateSet.iterator();
 			while( stateIterator.hasNext() ) {
 				State aState = stateIterator.next();
-				JavaOutput.print( aState.nameAsENUM() );
+				PythonOutput.print( aState.nameAsENUM() );
 				if( stateIterator.hasNext() ) {
-					JavaOutput.print( ", " );
+					PythonOutput.print( ", " );
 				}
 			}
 		}
@@ -834,28 +834,28 @@ public class MMClass {
 		// guarantees
 		//   all attributes of this class have been declared as instance variable of the PIM Overlay run-time type
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Attribute instance variables" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Attribute instance variables" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !attributeSet.isEmpty() ) {
 					for( Attribute anAttribute: attributeSet ) {
 						anAttribute.ruleDefineInstVar();
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Attribute anAttribute: attributeSet ) {
 					anAttribute.ruleDefineInstVar();
 				}
 			}
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 	
 		public void ruleAssociationInstVarList() {
@@ -875,10 +875,10 @@ public class MMClass {
 				participatesInAnyAssociations = participatesInAnyAssociations || anAssociation.involvesClass( this );
 			}
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Association participation instance variables" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Association participation instance variables" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( participatesInAnyAssociations ) {
 					for( Association anAssociation: Association.allAssociations() ) {
 						if( anAssociation.involvesClass( this ) ) {
@@ -887,11 +887,11 @@ public class MMClass {
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Association anAssociation: Association.allAssociations() ) {
 					if( anAssociation.involvesClass( this ) ) {
@@ -899,8 +899,8 @@ public class MMClass {
 					}
 				}
 			}
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleConstructorOperation() {
@@ -919,24 +919,24 @@ public class MMClass {
 			Event constructEvent = this.eventNamed( Event.defaultNewEventName );
 			if( constructEvent != null ) {
 				if( Context.model().isVerbose() ) {
-					JavaOutput.indent();
-					JavaOutput.println( "// Constructor" );
-					JavaOutput.println( "" );
-					JavaOutput.indentMore();
+					PythonOutput.indent();
+					PythonOutput.println( "// Constructor" );
+					PythonOutput.println( "" );
+					PythonOutput.indentMore();
 					constructEvent.ruleConstructorOperation();
-					JavaOutput.indentLess();
+					PythonOutput.indentLess();
 				} else {
 					constructEvent.ruleConstructorOperation();
 				}
 			} else {
-				JavaOutput.println( "****** ERROR: Can't find an event named" + Event.defaultNewEventName );
-				JavaOutput.println( "******        Can't generate code for a constructor!!!!" );
+				PythonOutput.println( "****** ERROR: Can't find an event named" + Event.defaultNewEventName );
+				PythonOutput.println( "******        Can't generate code for a constructor!!!!" );
 				System.out.println( "****** ERROR: Can't find an event named" + Event.defaultNewEventName );
 				System.out.println( "******        Can't generate code for a constructor!!!!" );
-				JavaOutput.incrementErrorCount();
+				PythonOutput.incrementErrorCount();
 			}
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleInitializeAssociationInstVars() {
@@ -974,28 +974,28 @@ public class MMClass {
 		// guarantees
 		//   code implementing getters for all attributes have been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Attribute getters" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Attribute getters" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !attributeSet.isEmpty() ) {
 					for( Attribute anAttribute: attributeSet ) {
 						anAttribute.ruleGetter();
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
-						JavaOutput.println( "" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
+						PythonOutput.println( "" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Attribute anAttribute: attributeSet ) {
 					anAttribute.ruleGetter();
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleDerivedAttributeGettersList() {
@@ -1011,28 +1011,28 @@ public class MMClass {
 		// guarantees
 		//   all derived attributes of this class have been implemented as compute on demand
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Derived attributes" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Derived attributes" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !derivedAttributeSet.isEmpty() ) {
 					for( DerivedAttribute aDerivedAttribute: derivedAttributeSet ) {
 						aDerivedAttribute.ruleDerivedGetter();
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
-						JavaOutput.println( "" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
+						PythonOutput.println( "" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( DerivedAttribute aDerivedAttribute: derivedAttributeSet ) {
 					aDerivedAttribute.ruleDerivedGetter();
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void rulePushedEventOperationsList() {
@@ -1049,10 +1049,10 @@ public class MMClass {
 		// guarantees
 		//   all events (except <<new>>) have been implemented as push operations & methods
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Pushed events" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Pushed events" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( ( eventSet.size() > 1 ) ) {
 					for( Event anEvent: eventSet ) {
 						if( !anEvent.name().equals( Event.defaultNewEventName ) ) {
@@ -1061,12 +1061,12 @@ public class MMClass {
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
-						JavaOutput.println( "" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
+						PythonOutput.println( "" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Event anEvent: eventSet ) {
 					if( !anEvent.name().equals( Event.defaultNewEventName ) ) {
@@ -1074,7 +1074,7 @@ public class MMClass {
 					}
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void rulePrivateTransitionActionsList() {
@@ -1100,28 +1100,28 @@ public class MMClass {
 				}
 			}
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Private transition actions" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Private transition actions" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !actionSet.isEmpty() ) {
 					for( Action anAction: actionSet ) {
 						anAction.ruleDefinePrivateAction();
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
-						JavaOutput.println( "" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
+						PythonOutput.println( "" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Action anAction: actionSet ) {
 					anAction.ruleDefinePrivateAction();
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleStateActionsTimeSlice() {
@@ -1141,35 +1141,35 @@ public class MMClass {
 		// guarantees
 		//   the timeSlice() operation and method implementation has been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// timeSlice() for state actions" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// timeSlice() for state actions" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 			}
-			JavaOutput.indent();
-			JavaOutput.println( "public void timeSlice() {" );
+			PythonOutput.indent();
+			PythonOutput.println( "public void timeSlice() {" );
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// requires" );
-				JavaOutput.indent();
-				JavaOutput.println( "//   none" );
-				JavaOutput.indent();
-				JavaOutput.println( "// guarantees" );
-				JavaOutput.indent();
-				JavaOutput.println( "//   one cycle of state-appropriate processing has been done" );
+				PythonOutput.indent();
+				PythonOutput.println( "// requires" );
+				PythonOutput.indent();
+				PythonOutput.println( "//   none" );
+				PythonOutput.indent();
+				PythonOutput.println( "// guarantees" );
+				PythonOutput.indent();
+				PythonOutput.println( "//   one cycle of state-appropriate processing has been done" );
 			}
-			JavaOutput.indentMore();
+			PythonOutput.indentMore();
 			for( State aState: stateSet ){
 				aState.ruleCallStateTimeSlice();
 			}
-			JavaOutput.indentLess();
-			JavaOutput.indent();
-			JavaOutput.println( "}" );
+			PythonOutput.indentLess();
+			PythonOutput.indent();
+			PythonOutput.println( "}" );
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			}
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void rulePrivateStateActionsList() {
@@ -1187,10 +1187,10 @@ public class MMClass {
 		// guarantees
 		//   Each state action has been implemented by a (private) operation and method
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Private state actions" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Private state actions" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 			}
 			ArrayList<Action> stateActionSet = new ArrayList<Action>();
 			for( State aState: stateSet ) {
@@ -1204,9 +1204,9 @@ public class MMClass {
 				anAction.ruleDefinePrivateAction();
 			}
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleInvariantsCheckOperation() {
@@ -1231,24 +1231,24 @@ public class MMClass {
 		// guarantees
 		//   code to verify all instance level invariant checks has been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// safe mode class invariants checks" );
-				JavaOutput.indentMore();
-				JavaOutput.println( "" );
+				PythonOutput.indent();
+				PythonOutput.println( "// safe mode class invariants checks" );
+				PythonOutput.indentMore();
+				PythonOutput.println( "" );
 			}
-			JavaOutput.indent();
-			JavaOutput.println( "public void classInvariantsCheck() {" );
+			PythonOutput.indent();
+			PythonOutput.println( "public void classInvariantsCheck() {" );
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// requires" );
-				JavaOutput.indent();
-				JavaOutput.println( "//   none" );
-				JavaOutput.indent();
-				JavaOutput.println( "// guarantees" );
-				JavaOutput.indent();
-				JavaOutput.println( "//   all verifiable run-time invariants checks have passed" );
+				PythonOutput.indent();
+				PythonOutput.println( "// requires" );
+				PythonOutput.indent();
+				PythonOutput.println( "//   none" );
+				PythonOutput.indent();
+				PythonOutput.println( "// guarantees" );
+				PythonOutput.indent();
+				PythonOutput.println( "//   all verifiable run-time invariants checks have passed" );
 			}
-			JavaOutput.indentMore();
+			PythonOutput.indentMore();
 			for( Attribute anAttribute: attributeSet ) {
 				if( anAttribute.isAssertable() ) {
 					anAttribute.ruleInstVarInvariantsCheck();						
@@ -1260,10 +1260,10 @@ public class MMClass {
 					anAssociation.ruleAssociationReferenceCheck();
 				}
 			}
-			JavaOutput.indentLess();
-			JavaOutput.indent();
-			JavaOutput.println( "}" );
-			JavaOutput.println( "" );
+			PythonOutput.indentLess();
+			PythonOutput.indent();
+			PythonOutput.println( "}" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleImplementReferenceCheckOperations() {
@@ -1284,9 +1284,9 @@ public class MMClass {
 					anAssociation.ruleImplementAssociationReferenceCheck();
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			}
 		}
 
@@ -1303,31 +1303,31 @@ public class MMClass {
 		// guarantees
 		//   the PIM overlay helper code has been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// PIM Overlay helper code" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// PIM Overlay helper code" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( !pIMHelperCode.isEmpty() ) {
 					for( String aLineOfHelperCode: pIMHelperCode ) {
-						JavaOutput.indent();
-						JavaOutput.println( NameService.formatActionStmt( aLineOfHelperCode ) );
+						PythonOutput.indent();
+						PythonOutput.println( NameService.formatActionStmt( aLineOfHelperCode ) );
 					}
-					JavaOutput.println( "" );
+					PythonOutput.println( "" );
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
-						JavaOutput.println( "" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
+						PythonOutput.println( "" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( String aLineOfHelperCode: pIMHelperCode ) {
-					JavaOutput.indent();
-					JavaOutput.println( NameService.formatActionStmt( aLineOfHelperCode ) );
+					PythonOutput.indent();
+					PythonOutput.println( NameService.formatActionStmt( aLineOfHelperCode ) );
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleAllMembersAccessor() {
@@ -1363,38 +1363,38 @@ public class MMClass {
 		// guarantees
 		//   code that provides access to all members of the class has been emitted
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// All class members accessor" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// All class members accessor" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 			}
-			JavaOutput.indent();
-			JavaOutput.print( "private static ArrayList<" + NameService.asClassLevelName( name ) + "> " );
-			JavaOutput.print( NameService.asInstanceLevelName( name ) + "Set = new ArrayList<" );
-			JavaOutput.println( NameService.asClassLevelName( name ) + ">();" );
-			JavaOutput.println( "" );
-			JavaOutput.indent();
-			JavaOutput.print( "public static ArrayList<" + NameService.asClassLevelName( name ) + "> all" );
-			JavaOutput.println( NameService.asClassLevelName( name ) + "s() {" );
+			PythonOutput.indent();
+			PythonOutput.print( "private static ArrayList<" + NameService.asClassLevelName( name ) + "> " );
+			PythonOutput.print( NameService.asInstanceLevelName( name ) + "Set = new ArrayList<" );
+			PythonOutput.println( NameService.asClassLevelName( name ) + ">();" );
+			PythonOutput.println( "" );
+			PythonOutput.indent();
+			PythonOutput.print( "public static ArrayList<" + NameService.asClassLevelName( name ) + "> all" );
+			PythonOutput.println( NameService.asClassLevelName( name ) + "s() {" );
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// requires" );
-				JavaOutput.indent();
-				JavaOutput.println( "//   none" );
-				JavaOutput.indent();
-				JavaOutput.println( "// guarantees" );
-				JavaOutput.indent();
-				JavaOutput.println( "// returns (reference to) ArrayList<> of all class members" );
+				PythonOutput.indent();
+				PythonOutput.println( "// requires" );
+				PythonOutput.indent();
+				PythonOutput.println( "//   none" );
+				PythonOutput.indent();
+				PythonOutput.println( "// guarantees" );
+				PythonOutput.indent();
+				PythonOutput.println( "// returns (reference to) ArrayList<> of all class members" );
 			}
-			JavaOutput.indentMore();
-			JavaOutput.indent();
-			JavaOutput.println( "return " + NameService.asInstanceLevelName( name ) + "Set;" );
-			JavaOutput.indentLess();
-			JavaOutput.indent();
-			JavaOutput.println( "}" );
-			JavaOutput.indentLess();
-			JavaOutput.println( "" );
-			JavaOutput.println( "" );
+			PythonOutput.indentMore();
+			PythonOutput.indent();
+			PythonOutput.println( "return " + NameService.asInstanceLevelName( name ) + "Set;" );
+			PythonOutput.indentLess();
+			PythonOutput.indent();
+			PythonOutput.println( "}" );
+			PythonOutput.indentLess();
+			PythonOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 		public void ruleAssociationLinkUnlinkServices() {
@@ -1415,10 +1415,10 @@ public class MMClass {
 				participatesInAnyAssociations = participatesInAnyAssociations || anAssociation.involvesClass( this );
 			}
 			if( Context.model().isVerbose() ) {
-				JavaOutput.indent();
-				JavaOutput.println( "// Association participation link and unlink services" );
-				JavaOutput.println( "" );
-				JavaOutput.indentMore();
+				PythonOutput.indent();
+				PythonOutput.println( "// Association participation link and unlink services" );
+				PythonOutput.println( "" );
+				PythonOutput.indentMore();
 				if( participatesInAnyAssociations ) {
 					for( Association anAssociation: Association.allAssociations() ) {
 						if( anAssociation.involvesClass( this ) ) {
@@ -1427,11 +1427,11 @@ public class MMClass {
 					}
 				} else {
 					if( Context.model().isVerbose() ) {
-						JavaOutput.indent();
-						JavaOutput.println( "// none" );
+						PythonOutput.indent();
+						PythonOutput.println( "// none" );
 					}
 				}
-				JavaOutput.indentLess();
+				PythonOutput.indentLess();
 			} else {
 				for( Association anAssociation: Association.allAssociations() ) {
 					if( anAssociation.involvesClass( this ) ) {
@@ -1439,7 +1439,7 @@ public class MMClass {
 					}
 				}
 			}
-			JavaOutput.println( "" );
+			PythonOutput.println( "" );
 		}
 
 
