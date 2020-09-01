@@ -3,36 +3,36 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public class PythonOutput {
-// General description
-//    Model compiler
-//   This is a helper class to manage indentation in generated code
-// Invariants
-//   none
-// Implementation notes
-//   All static methods to get global visibility
-//   flag is a simple way to enable indentation markers in the generated code
-// Application notes
-//   Outer rule needs to establish indent level for any inner rules that need it
-//   Inner rule should never Indent.more() before emitting anything
-//   Outer rule needs to Indent.more() and Indent.less() in same rule
-//
-// This material is copied and/or adapted from the (to be)
-//   How to Engineer Software website
-//
-//	    http://www.Construx.com/howtoengineersw
-//
-// This material is Copyright � 2018 by Stephen R. Tockey
-// Permission is hereby given to copy, adapt, and distribute this material as
-//   long as this notice is included on all such materials and the materials are
-//   not sold, licensed, or otherwise distributed for commercial gain.
-//
-// This tool is being distributed "as-is". No warrantee is expressed or implied.
-// While the author believes that this tool gives correct answers, the user
-//   assumes all risk of use.
+	// General description
+	// Model compiler
+	// This is a helper class to manage indentation in generated code
+	// Invariants
+	// none
+	// Implementation notes
+	// All static methods to get global visibility
+	// flag is a simple way to enable indentation markers in the generated code
+	// Application notes
+	// Outer rule needs to establish indent level for any inner rules that need it
+	// Inner rule should never Indent.more() before emitting anything
+	// Outer rule needs to Indent.more() and Indent.less() in same rule
+	//
+	// This material is copied and/or adapted from the (to be)
+	// How to Engineer Software website
+	//
+	// http://www.Construx.com/howtoengineersw
+	//
+	// This material is Copyright � 2018 by Stephen R. Tockey
+	// Permission is hereby given to copy, adapt, and distribute this material as
+	// long as this notice is included on all such materials and the materials are
+	// not sold, licensed, or otherwise distributed for commercial gain.
+	//
+	// This tool is being distributed "as-is". No warrantee is expressed or implied.
+	// While the author believes that this tool gives correct answers, the user
+	// assumes all risk of use.
 
 	// Constants
 
-	private static final int indentStep = 3;
+	private static final int indentStep = 4;
 	private static final boolean showMarkerFlag = false;
 
 	// Static (class) variables
@@ -132,15 +132,17 @@ public class PythonOutput {
 		// guarantees
 		// proper number of indentation spaces have been put into the output
 		// *** IT USED TO, NOT ANYMORE. NOW IT DOES NOTHING ***
-//			for( int steps = 1; steps <= indentLevel; steps++ ) {
-//				System.out.print( " " );
-//			}
-//			if( showMarkerFlag ) {
-//				System.out.print( "|" );
-//			}
+		// for( int steps = 1; steps <= indentLevel; steps++ ) {
+		// System.out.print( " " );
+		// }
+		// if( showMarkerFlag ) {
+		// System.out.print( "|" );
+		// }
 
-// NOTE: DOESN'T ACTUALLY DO ANYTHING ANYMORE, TO ALLOW FOR DYNAMIC BACKING-UP ON INDENTATION
-// I'M KEEPING IT FOR THE TIME BEING JUST TO MAINTAIN COMPATIBILITY WITH MODEL EDITOR AND COMPILER LEGACY
+		// NOTE: DOESN'T ACTUALLY DO ANYTHING ANYMORE, TO ALLOW FOR DYNAMIC BACKING-UP
+		// ON INDENTATION
+		// I'M KEEPING IT FOR THE TIME BEING JUST TO MAINTAIN COMPATIBILITY WITH MODEL
+		// EDITOR AND COMPILER LEGACY
 
 	}
 
