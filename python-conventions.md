@@ -17,6 +17,19 @@ Java conventions and assumptions are baked into the compiler code.
 This document will state clearly what Python conventions are assumed and therefore how the compiler
 will then generate the code accordingly.
 
+### First, a clear definition of what's directly readable and writable
+
+In this document, when I say directly readable or simply readable, this is what I mean:
+
+> Access using `instance.instance_attribute` or `Class.ClassAttribute` outside the class
+
+In this document, when I say directly writable or simply writable, this is what I mean:
+
+> Assign values using `instance.instance_attribute = <new_value>` outside the class
+
+Yes, I did not mention class attributes to be writable. This will be covered later in this document.
+
+
 ### Private-public distinction only applies to instance not class
 
 There are a few useful distinctions in terms of practice.
@@ -155,12 +168,12 @@ Therefore, this leads to the next assumption this model compiler adopts for Pyth
 
 **Assumption 5: Class attributes are always assumed as immutable outside the class**
 
-| When outside the class \ Attribute                   | Private  Instance                                           | Public Instance                            | Class                                        |
-| ---------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ | -------------------------------------------- |
-| Not even readable                                    | Leave it as private                                         | Not applicable                             | Not applicable                               |
-| Readable as `instance.attribute`                     | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute` |
-| Writeable as `instance.attribute = <some_new_value>` | ❌ or might as well make it public                           | ✅                                          | ❌ or provide a static method to modify it    |
-| Writeable but inside another public method           | ✅                                                           | ✅                                          | ✅                                            |
+| When outside the class \ Attribute                         | Private  Instance                                           | Public Instance                            | Class                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------ |
+| Not even readable                                          | Leave it as private                                         | Not applicable                             | Not applicable                                                           |
+| Readable as `instance.attribute`                           | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute`                             |
+| Writeable as `instance.attribute = <some_new_value>`       | ❌ or might as well make it public                           | ✅                                          | No direct modification. Provide a class method to modify it if necessary |
+| Writeable but as one small part of a longer, public method | ✅                                                           | ✅                                          | ✅                                                                        |
 
 Since class attributes are treated as immutable outside the class, there's no need to add a leading single underscore.
 
@@ -190,3 +203,24 @@ Summarizing everything from above, we get the following:
 6. Class attributes are always treated as readonly and immutable.
 
 
+Below is a clear summary in a table format of all the assumptions articulated from above.
+
+One table is for attributes. One table is for methods.
+
+
+| Action at where \ Attribute                             | Private  Instance   (leading single underscore ONLY) | Public Instance                             | Class  (No public or private distinction)          |
+| ------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------- | -------------------------------------------------- |
+| Readable *inside* the class in *any instance* method  ✅ | `self._instance_attribute`                           | `self.instance_attribute`                   | `Class.ClassAttribute`                             |
+| Readable *inside* the class in *any Class* method  ✅    | `instance._instance_attribute`                       | `instance.instance_attribute`               | `Class.ClassAttribute`                             |
+| Writable *inside* the class in *any instance* method  ✅ | `self._instance_attribute = <new_value>`             | `self.instance_attribute = <new_value>`     | `Class.ClassAttribute = <new_value>`               |
+| Writable *inside* the class in *any Class* method  ✅    | `instance._instance_attribute = <new_value>`         | `instance.instance_attribute = <new_value>` | `Class.ClassAttribute = <new_value>`               |
+| Directly Readable *outside* the class                   | ❌                                                    | `instance.instance_attribute`               | `Class.ClassAttribute`                             |
+| Directly Writable *outside* the class                   | ❌                                                    | `instance.instance_attribute = <new_value>` | ❌ or use `classmethod` if there's a strong need to |
+
+
+| Used at where \ Method                                | Private Instance    (leading single underscore ONLY)                                                              | Public Instance                                                                                                                                                                 | (No public or private distinction) Class method works with ClassAttribute                                                  | Class method does NOT work with ClassAttribute (aka static)                                                                        |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Called *Inside* the class in *any instance* method  ✅ | `self._instance_method()`                                                                                         | `self.instance_method()`                                                                                                                                                        | `Class.class_method()`                                                                                                     | `Class.static_method()`                                                                                                            |
+| Called *Inside* the class in *any Class* method  ✅    | `instance._instance_method()`                                                                                     | `instance.instance_method()`                                                                                                                                                    | `cls.class_method()`                                                                                                       | `cls.static_method()`                                                                                                              |
+| Called *Outside* the class                            | ❌                                                                                                                 | `instance.instance_method()`                                                                                                                                                    | `Class.class_method()`                                                                                                     | `Class.static_method()`                                                                                                            |
+| Define *Inside* the class  ✅                          | <ul><li>no decorator needed</li> <li>always `self` as first argument e.g., `def _instance_method(self)`</li></ul> | <ul><li>`@property` decorator needed for getter of private instance attribute else no need</li> <li>always `self` as first argument e.g., `def instance_method(self)`</li></ul> | <ul><li>always use `@classmethod` decorator</li><li>always `cls` as first argument e.g., `def class_method(cls)`</li></ul> | <ul><li>always use `@staticmethod` decorator</li><li>NO special first argument such as `cls` e.g., `def static_method()`</li></ul> |
