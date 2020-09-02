@@ -732,6 +732,7 @@ public class MMClass {
 			PythonOutput.indent();
 			PythonOutput.println(anImportStatement);
 		}
+		PythonOutput.println("# see MMClass.rulePIMImportsList for implementation");
 		PythonOutput.println("");
 	}
 
@@ -745,6 +746,7 @@ public class MMClass {
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
 			PythonOutput.println("# Class description");
+			PythonOutput.println("# see MMClass.ruleClassDescription for implementation");
 			PythonOutput.println("");
 			PythonOutput.indentMore();
 			PythonOutput.indent();
@@ -776,6 +778,7 @@ public class MMClass {
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
 			PythonOutput.println("# PIM constants");
+			PythonOutput.println("# see MMClass.rulePIMConstantsList for implementation");
 			PythonOutput.println("");
 			PythonOutput.indentMore();
 			if (!pIMConstantSet.isEmpty()) {
@@ -803,10 +806,10 @@ public class MMClass {
 	public void ruleStateEnumDeclaration() {
 		// description
 		// This rule emits the state names as enums
-		// e.g., "public enum <classname>_states { STATE1, STATE2, STATE3, STATE4 };"
+		// e.g., "<classname>_states = Enum("<classname>_states", "STATE1 STATE2")
 		//
 		// Class.#STATE_ENUM_DECLARATION -->
-		// 'public enum ' + state attribute rt type + ' { ' +
+		// state attribute rt type + ' { ' +
 		// #STATE_ENUM_LIST +
 		// ' };'
 		//
@@ -815,9 +818,20 @@ public class MMClass {
 		// guarantees
 		// the state enum declaration for this class has been emitted
 		PythonOutput.indent();
-		PythonOutput.print("public enum " + this.stateAttributeEnumRTType() + " { ");
+		PythonOutput.println("# State Enum Declaration");
+		PythonOutput.println("# see MMClass.ruleStateEnumDeclaration for implementation");
+		PythonOutput.println("");
+		PythonOutput.print(this.stateAttributeEnumRTType() + " = Enum(");
+		// this is uniquely for Python when stating Enum
+		PythonOutput.print("\"" + this.stateAttributeEnumRTType() + "\", ");
+		// this is uniquely for Python when stating Enum
+		// open the enumlist
+		PythonOutput.print("\"");
 		this.ruleStateEnumList();
-		PythonOutput.println(" };");
+		// this is uniquely for Python when stating Enum
+		// close the enumlist
+		PythonOutput.print("\"");
+		PythonOutput.println(" )");
 		PythonOutput.println("");
 		PythonOutput.println("");
 	}
@@ -825,7 +839,7 @@ public class MMClass {
 	public void ruleStateEnumList() {
 		// description
 		// This rule emits the state names as enums
-		// e.g., "public enum <classname>_states { STATE1, STATE2, STATE3, STATE4 };"
+		// e.g., "<classname>_states = Enum("<classname>_states", "STATE1 STATE2")
 		//
 		// Class.#STATE_ENUM_LIST -->
 		// foreach aState in the state model
@@ -836,13 +850,13 @@ public class MMClass {
 		// guarantees
 		// the set of state enums for this class has been emitted
 		// Implementation notes
-		// needs to be done with Iterator to avoid trailing comma
+		// needs to be done with Iterator to avoid trailing space
 		Iterator<State> stateIterator = stateSet.iterator();
 		while (stateIterator.hasNext()) {
 			State aState = stateIterator.next();
 			PythonOutput.print(aState.nameAsENUM());
 			if (stateIterator.hasNext()) {
-				PythonOutput.print(", ");
+				PythonOutput.print(" ");
 			}
 		}
 	}
@@ -863,11 +877,17 @@ public class MMClass {
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
 			PythonOutput.println("# Attribute instance variables");
+			PythonOutput.println("# see MMClass.ruleAttributeInstVarList for implementation");
+			PythonOutput.println("# Python doesn't treat private variables too strictly");
+			PythonOutput.println("# by convention it uses _ for private variables");
+			PythonOutput.println("# https://docs.python.org/3/tutorial/classes.html#private-variables");
+			PythonOutput.println(
+					"# and it treats client code as responsible users if they choose to ignore the convention");
+			PythonOutput.println("# https://docs.python-guide.org/writing/style/#we-are-all-responsible-users");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
 			if (!attributeSet.isEmpty()) {
 				for (Attribute anAttribute : attributeSet) {
-					anAttribute.ruleDefineInstVar();
+					anAttribute.ruleDefineInstVarAsPrivate();
 				}
 			} else {
 				if (Context.model().isVerbose()) {
@@ -878,7 +898,7 @@ public class MMClass {
 			PythonOutput.indentLess();
 		} else {
 			for (Attribute anAttribute : attributeSet) {
-				anAttribute.ruleDefineInstVar();
+				anAttribute.ruleDefineInstVarAsPrivate();
 			}
 		}
 		PythonOutput.println("");

@@ -172,7 +172,15 @@ public class Attribute {
 	// ******MODEL COMPILER******
 	// Everything from here down is specific to the model compiler itself
 
-	public void ruleDefineInstVar() {
+	public void ruleDefineInstVarAsPublic() {
+		ruleDefineInstVar(false);
+	}
+
+	public void ruleDefineInstVarAsPrivate() {
+		ruleDefineInstVar(true);
+	}
+
+	public void ruleDefineInstVar(boolean is_private) {
 		// description
 		// This rule emits the instance variable definition for an attribute
 		//
@@ -186,13 +194,17 @@ public class Attribute {
 		// attribute name is not null
 		// guarantees
 		// the instance variable declaration code for this attribute has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("private " + definedRange.pIMRunTimeType());
-		PythonOutput.print(" " + NameService.asInstanceLevelName(name));
+		if (is_private) {
+			PythonOutput.print("_" + NameService.asInstanceLevelName(name));
+		} else {
+			PythonOutput.print(NameService.asInstanceLevelName(name));
+		}
+		PythonOutput.print(": " + definedRange.pIMRunTimeType());
+
 		if (definedRange.pIMInitialValue() != "") {
 			PythonOutput.print(" = " + definedRange.pIMInitialValue());
 		}
-		PythonOutput.println(";");
+		PythonOutput.println("");
 	}
 
 	public void ruleGetter() {
