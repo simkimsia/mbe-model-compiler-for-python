@@ -168,13 +168,13 @@ Therefore, this leads to the next assumption this model compiler adopts for Pyth
 
 **Assumption 5: Class attributes are always assumed as immutable outside the class**
 
-| Action at where \ Attribute                                                    | Private  Instance                                           | Public Instance                            | Class                                                                                   |
-| ------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
-| Not even readable *outside* the Class                                          | Leave it as private                                         | Not applicable                             | Not applicable                                                                          |
-| Readable *outside* the Class as `instance.attribute`                           | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute`                                            |
-| Writeable *outside* the Class as `instance.attribute = <some_new_value>`       | ❌ or might as well make it public                           | ✅                                          | ❌ <br/>No direct modification allowed. Provide a class method to modify it if necessary |
-| Writeable *outside* the Class but as one small part of a longer, public method | ✅                                                           | ✅                                          | ✅                                                                                       |
-| Define ClassAttribute using `ClassVar`                                         | ❌                                                           | ❌                                          | ✅ but see example code below when data type is the Class itself                         |
+| Action at where \ Attribute                                                           | Private  Instance                                           | Public Instance                            | Class                                                                                   |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Not even readable *outside* the Class                                                 | Leave it as private                                         | Not applicable                             | Not applicable                                                                          |
+| Readable *outside* the Class as `instance.attribute`                                  | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute`                                            |
+| Writeable *outside* the Class as `instance.attribute = <some_new_value>`              | ❌ or might as well make it public                           | ✅                                          | ❌ <br/>No direct modification allowed. Provide a class method to modify it if necessary |
+| Writeable *outside* the Class but as one small part of a longer, public method        | ✅                                                           | ✅                                          | ✅                                                                                       |
+| Define with data type but see example code below when data type is the Class itself ✅ | ✅                                                           | ✅                                          | ✅                                                                                       |
 
 
 #### Define Class Attribute with the Class as data type
@@ -235,16 +235,15 @@ One table is for attributes. One table is for methods.
 
 ### Attribute Summary
 
-| Action at where \ Attribute                                                     | Private  Instance   (leading single underscore ONLY) | Public Instance                             | Class  (No public or private distinction)                  |
-| ------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
-| Readable *inside* the class in *any instance* method  ✅                         | `self._instance_attribute`                           | `self.instance_attribute`                   | `Class.ClassAttribute`                                     |
-| Readable *inside* the class in *any Class* method  ✅                            | `instance._instance_attribute`                       | `instance.instance_attribute`               | `Class.ClassAttribute`                                     |
-| Writable *inside* the class in *any instance* method  ✅                         | `self._instance_attribute = <new_value>`             | `self.instance_attribute = <new_value>`     | `Class.ClassAttribute = <new_value>`                       |
-| Writable *inside* the class in *any Class* method  ✅                            | `instance._instance_attribute = <new_value>`         | `instance.instance_attribute = <new_value>` | `Class.ClassAttribute = <new_value>`                       |
-| Directly Readable *outside* the class                                           | ❌                                                    | `instance.instance_attribute`               | `Class.ClassAttribute`                                     |
-| Directly Writable *outside* the class                                           | ❌                                                    | `instance.instance_attribute = <new_value>` | ❌ or use `classmethod` if there's a strong need to         |
-| Define using the same Class as type e.g. `ClassAttribute:ClassVar[List[Class]]` | ❌                                                    | ❌                                           | Must be defined outside the Class and still use `ClassVar` |
-| Define using any other data types ✅                                             | ✅                                                    | ✅                                           | ✅ but do it inside the Class and use `ClassVar`            |
+| Action at where \ Attribute                                                        | Private  Instance   (leading single underscore ONLY) | Public Instance                             | Class  (No public or private distinction)          |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------- | -------------------------------------------------- |
+| Readable *inside* the class in *any instance* method  ✅                            | `self._instance_attribute`                           | `self.instance_attribute`                   | `Class.ClassAttribute`                             |
+| Readable *inside* the class in *any Class* method  ✅                               | `instance._instance_attribute`                       | `instance.instance_attribute`               | `Class.ClassAttribute`                             |
+| Writable *inside* the class in *any instance* method  ✅                            | `self._instance_attribute = <new_value>`             | `self.instance_attribute = <new_value>`     | `Class.ClassAttribute = <new_value>`               |
+| Writable *inside* the class in *any Class* method  ✅                               | `instance._instance_attribute = <new_value>`         | `instance.instance_attribute = <new_value>` | `Class.ClassAttribute = <new_value>`               |
+| Directly Readable *outside* the class                                              | ❌                                                    | `instance.instance_attribute`               | `Class.ClassAttribute`                             |
+| Directly Writable *outside* the class                                              | ❌                                                    | `instance.instance_attribute = <new_value>` | ❌ or use `classmethod` if there's a strong need to |
+| Define with data type but note Python version when data type is the Class itself ✅ | ✅                                                    | ✅                                           | ✅                                                  |
 
 ### Method Summary
 
