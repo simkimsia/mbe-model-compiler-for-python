@@ -168,33 +168,36 @@ Therefore, this leads to the next assumption this model compiler adopts for Pyth
 
 **Assumption 5: Class attributes are always assumed as immutable outside the class**
 
-| Action at where \ Attribute                                                     | Private  Instance                                           | Public Instance                            | Class                                                                                   |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
-| Not even readable *outside* the Class                                           | Leave it as private                                         | Not applicable                             | Not applicable                                                                          |
-| Readable *outside* the Class as `instance.attribute`                            | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute`                                            |
-| Writeable *outside* the Class as `instance.attribute = <some_new_value>`        | ❌ or might as well make it public                           | ✅                                          | ❌ <br/>No direct modification allowed. Provide a class method to modify it if necessary |
-| Writeable *outside* the Class but as one small part of a longer, public method  | ✅                                                           | ✅                                          | ✅                                                                                       |
-| Define using the same Class as type e.g. `ClassAttribute:ClassVar[List[Class]]` | ❌                                                           | ❌                                          | Must be defined outside the Class and still use `ClassVar`. See example code below      |
-| Define using any other data types                                               | ✅                                                           | ✅                                          | Do it inside the Class and use `ClassVar`. See example code below                       |
+| Action at where \ Attribute                                                    | Private  Instance                                           | Public Instance                            | Class                                                                                   |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Not even readable *outside* the Class                                          | Leave it as private                                         | Not applicable                             | Not applicable                                                                          |
+| Readable *outside* the Class as `instance.attribute`                           | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute`                                            |
+| Writeable *outside* the Class as `instance.attribute = <some_new_value>`       | ❌ or might as well make it public                           | ✅                                          | ❌ <br/>No direct modification allowed. Provide a class method to modify it if necessary |
+| Writeable *outside* the Class but as one small part of a longer, public method | ✅                                                           | ✅                                          | ✅                                                                                       |
+| Define ClassAttribute using `ClassVar`                                         | ❌                                                           | ❌                                          | ✅ but see example code below when data type is the Class itself                         |
 
 
-#### Define Class Attribute outside Class
+#### Define Class Attribute with the Class as data type
+
+if Python >= 3.10
 
 ```python
 from typing import ClassVar, List
 class PythonicSimpleClass:
-    pass
-
-# ClassAttribute that holds all class member
-PythonicSimpleClass.ClassAttribute: ClassVar[List[PythonicSimpleClass]] = []
+    # ClassAttribute that holds all class member
+    ClassAttribute: ClassVar[List[PythonicSimpleClass]] = []
 ```
 
-#### Define Class Attribute inside Class
+if Python >= 3.7 but < 3.10
 
 ```python
+# see https://stackoverflow.com/a/33533514/80353 on why this is for Class using itself as data type
+# for >= Python 3.7 and below 3.10
+from __future__ import annotations
 from typing import ClassVar, List
 class PythonicSimpleClass:
-    ClassAttribute: ClassVar[List[int]] = []
+    # ClassAttribute that holds all class member
+    ClassAttribute: ClassVar[List[PythonicSimpleClass]] = []
 ```
 
 
@@ -230,6 +233,7 @@ Below is a clear summary in a table format of all the assumptions articulated fr
 
 One table is for attributes. One table is for methods.
 
+### Attribute Summary
 
 | Action at where \ Attribute                                                     | Private  Instance   (leading single underscore ONLY) | Public Instance                             | Class  (No public or private distinction)                  |
 | ------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
@@ -242,10 +246,11 @@ One table is for attributes. One table is for methods.
 | Define using the same Class as type e.g. `ClassAttribute:ClassVar[List[Class]]` | ❌                                                    | ❌                                           | Must be defined outside the Class and still use `ClassVar` |
 | Define using any other data types ✅                                             | ✅                                                    | ✅                                           | ✅ but do it inside the Class and use `ClassVar`            |
 
+### Method Summary
 
 | Used at where \ Method                                | Private Instance    (leading single underscore ONLY)                                                              | Public Instance                                                                                                                                                                 | (No public or private distinction) Class method works with ClassAttribute                                                  | Class method does NOT work with ClassAttribute (aka static)                                                                        |
 | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | Called *Inside* the class in *any instance* method  ✅ | `self._instance_method()`                                                                                         | `self.instance_method()`                                                                                                                                                        | `Class.class_method()`                                                                                                     | `Class.static_method()`                                                                                                            |
 | Called *Inside* the class in *any Class* method  ✅    | `instance._instance_method()`                                                                                     | `instance.instance_method()`                                                                                                                                                    | `cls.class_method()`                                                                                                       | `cls.static_method()`                                                                                                              |
 | Called *Outside* the class                            | ❌                                                                                                                 | `instance.instance_method()`                                                                                                                                                    | `Class.class_method()`                                                                                                     | `Class.static_method()`                                                                                                            |
-| Define *Inside* the class  ✅                          | <ul><li>no decorator needed</li> <li>always `self` as first argument e.g., `def _instance_method(self)`</li></ul> | <ul><li>`@property` decorator needed for getter of private instance attribute else no need</li> <li>always `self` as first argument e.g., `def instance_method(self)`</li></ul> | <ul><li>always use `@classmethod` decorator</li><li>always `cls` as first argument e.g., `def class_method(cls)`</li></ul> | <ul><li>always use `@staticmethod` decorator</li><li>NO special first argument such as `cls` e.g., `def static_method()`</li></ul> |
+| Define the method  ✅                                  | <ul><li>no decorator needed</li> <li>always `self` as first argument e.g., `def _instance_method(self)`</li></ul> | <ul><li>`@property` decorator needed for getter of private instance attribute else no need</li> <li>always `self` as first argument e.g., `def instance_method(self)`</li></ul> | <ul><li>always use `@classmethod` decorator</li><li>always `cls` as first argument e.g., `def class_method(cls)`</li></ul> | <ul><li>always use `@staticmethod` decorator</li><li>NO special first argument such as `cls` e.g., `def static_method()`</li></ul> |
