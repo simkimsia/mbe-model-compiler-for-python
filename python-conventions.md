@@ -1,0 +1,192 @@
+# Python conventions
+
+Python culturally doesn't implement access modifiers such as `public`, `private`, `protected` like
+in Java. See this [SO question](https://stackoverflow.com/questions/997482/does-java-support-default-parameter-values) for example of such discussion.
+
+Python treats client code as responsible users. So if they choose to ignore the convention, Python
+assumes they know what they are doing.
+
+See https://docs.python-guide.org/writing/style/#we-are-all-responsible-users for details about this
+convention.
+
+## How do we then treat Python class and instance attributes
+
+This model compiler written by Steve Tockey originally targets Java as the target language. So some
+Java conventions and assumptions are baked into the compiler code.
+
+This document will state clearly what Python conventions are assumed and therefore how the compiler
+will then generate the code accordingly.
+
+### Private-public distinction only applies to instance not class
+
+There are a few useful distinctions in terms of practice.
+
+We want to distinguish between what's usable outside the class.
+
+So `private` means used ONLY inside the class. `public` means usable outside the class as well.
+
+
+Note: Usable outside the class but not inside the class makes no sense, so we ignore this scenario
+
+
+| Usable \ Modifiers                               | Private | Public |
+| ------------------------------------------------ | ------- | ------ |
+| directly readable and writable inside the class  | ✅       | ✅      |
+| directly readable and writable outside the class | ❌       | ✅      |
+
+For public attributes, we also want to distinguish what's read-only (aka accessible) and what's writeable (aka mutable) *when outside the class*.
+
+| When outside the class \ Modifiers                   | Private                                                     | Public                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ |
+| Not even readable                                    | Leave it as private                                         | Not applicable                             |
+| Readable as `instance.attribute`                     | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` |
+| Writeable as `instance.attribute = <some_new_value>` | Not applicable or might as well make it public              | ✅                                          |
+| Writeable but inside another public method           | ✅                                                           | ✅                                          |
+
+With this in mind, we want to say that private-public distinction applies to instance level properties (my umbrella term for both attributes and methods). Not class properties. Though I admit there's practically no such thing as a mutable method, but just to be safe, I use the term "properties".
+
+**Assumption 1: Only instance properties have private-public distinctions. Not class-level properties**
+
+
+### Underscores
+
+In Python, there are two ways to indicate private methods or attributes.
+
+- leading single underscore (as in `_var`)
+- leading double underscore (as in `__var`)
+
+Another way to say double underscore is "dunder". Henceforth, I will use "dunder" for rest of this document.
+
+See https://dbader.org/blog/meaning-of-underscores-in-python last section for a summary of conventions for underscores.
+
+When using leading dunder, it can trigger a phenomenon known as "name mangling" which makes it harder to directly access the attribute or method.
+
+However, this model compiler will NOT implement leading dunder at all.
+
+**Assumption 2: This compiler does NOT implement leading dunder at all for private methods and attributes.**
+
+Or another way to say this is
+
+**Assumption 2: This compiler always implements leading single underscore for private methods and attributes**
+
+| underscores \ Modifiers                | Private | Public |
+| -------------------------------------- | ------- | ------ |
+| leading single underscores like `_var` | ✅       | ❌      |
+| leading dunders like `__var`           | ❌       | ❌      |
+
+
+### Instance attribute
+
+In Python, there's no strong need to declare public instance attributes. This compiler takes the convention that all instance attributes are to be declared regardless.
+
+An example Python class showing how there's not declaring instance attribute will still work
+
+```python
+# this works but not the accepted convention
+class ExampleClass(object):
+  class_attr = 0
+  def __init__(self, instance_attr):
+    self.instance_attr = instance_attr
+```
+
+To help distinguish during declaration which is class attribute and which is instance attribute the convention is to use snake_style for instance attribute and CamelCase for class attribute
+
+**Assumption 2: All instance attributes must be declared, private or not**
+
+```python
+# the accepted convention
+class ExampleClass(object):
+  ClassAttr:int = 0
+  instance_attr:int
+  def __init__(self, instance_attr):
+    self.instance_attr = instance_attr
+```
+
+And that all instance attributes are default to be public unless stated otherwise.
+
+The only exception are `state` attributes. They should default to private. Therefore, `_state`
+
+**Assumption 3: All instance attributes default to public unless stated otherwise. The exception is `_state` attribute which should default to private.**
+
+Private instance attributes are by convention assumed to not available even for readonly access.
+
+If there's a need to provide read access to private attributes, use a public instance method using `@property` decorator.
+
+**Assumption 4: All private instance attributes are not even accessible for readonly access. To allow read access, create a public instance method using `@property` decorator**
+
+### Class attribute
+
+Another issue is class attributes.
+
+See this https://dzone.com/articles/python-class-attributes-vs-instance-attributes for details. Previously, I reuse example code above in this article.
+
+Below I will reuse more code and quoted a few lines from the same article.
+
+```python
+if __name__ == '__main__':
+foo = ExampleClass(1)
+bar = ExampleClass(2)
+    # print the instance attribute of the object foo
+    print (foo.instance_attr)
+    #1
+    #print the instance attribute of the object var
+    print (bar.instance_attr)
+    #2
+    #print the class attribute of the class ExampleClass as a property of the class itself
+    print (ExampleClass.ClassAttr)
+    #0
+    #print the classattribute  of the class as a proporty of the objects foo,bar
+    print (bar.ClassAttr)
+    #0
+    print (foo.ClassAttr)
+    #0
+    # try to print instance attribute as a class property
+    print (ExampleClass.instance_attr)
+    #AttributeError: type object 'ExampleClass' has no attribute 'instance_attr'
+```
+
+> In Python, the class attribute (ClassAttr) is accessible as both a property of the class and as a property of objects, as it is shared between all of them.
+
+Furthermore, class attributes can mutate to be instance attributes. Which complicates matters.
+
+Basically, Python gives a lot of latitude to developers.
+
+Therefore, this leads to the next assumption this model compiler adopts for Python.
+
+**Assumption 5: Class attributes are always assumed as immutable outside the class**
+
+| When outside the class \ Attribute                   | Private  Instance                                           | Public Instance                            | Class                                        |
+| ---------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------ | -------------------------------------------- |
+| Not even readable                                    | Leave it as private                                         | Not applicable                             | Not applicable                               |
+| Readable as `instance.attribute`                     | Create a public accessor method using `@property` decorator | Directly access using `instance.attribute` | Directly access using `Class.ClassAttribute` |
+| Writeable as `instance.attribute = <some_new_value>` | ❌ or might as well make it public                           | ✅                                          | ❌ or provide a static method to modify it    |
+| Writeable but inside another public method           | ✅                                                           | ✅                                          | ✅                                            |
+
+Since class attributes are treated as immutable outside the class, there's no need to add a leading single underscore.
+
+**Assumption 5.1: Therefore, this compiler does NOT add leading underscores to class attributes or methods**
+
+Since this compiler assumes class attributes are immutable. It is then consistent that this compiler assumes developers have no need to ever mutate a class attribute into a instance attribute.
+
+**Assumption 5.1.1: No need to ever mutate a class attribute**
+
+And finally, since Python treats developers as responsible users, creating a static method that simply returns a class attribute is redundant code. This model compiler assumes direct access to any class attribute.
+
+**Assumption 5.2: Static methods that return one class attributes are redundant because this compiler assumes direct access to all class attributes for read purposes**
+
+If we recall that the private-public distinction applies to instance level attributes and methods. So this means the opposite is also true
+
+**Assumption 1.1: No such thing as a class attribute or method that's not meant to be read**
+
+## Private-public distinction only applies to instance attributes and methods
+
+Summarizing everything from above, we get the following:
+
+1. private-public distinction only applies to instance attributes and methods. Not class level.
+2. ALways use leading single underscores for private attributes and methods
+3. All instance attributes must be declared explicitly in the class
+4. All instance attributes are by convention public except `state` which is always by default private
+5. If want to provide read access to private attribute, then need to provide public instance method using `@property` decorator
+6. Class attributes are always treated as readonly and immutable.
+
+
