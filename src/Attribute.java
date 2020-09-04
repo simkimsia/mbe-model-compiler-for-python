@@ -225,20 +225,21 @@ public class Attribute {
 		PythonOutput.println(" " + NameService.asInstanceLevelName(name) + "() {");
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
+			PythonOutput.indentMore();
+			PythonOutput.println("# requires");
 			PythonOutput.indent();
-			PythonOutput.println("//   none");
+			PythonOutput.println("#   none");
 			PythonOutput.indent();
-			PythonOutput.println("// guarantees");
+			PythonOutput.println("# guarantees");
 			PythonOutput.indent();
-			PythonOutput.println("//   returns the " + name);
+			PythonOutput.println("#   returns the " + name);
 		}
 		PythonOutput.indentMore();
 		PythonOutput.indent();
 		PythonOutput.println("return " + NameService.asInstanceLevelName(name) + ";");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 

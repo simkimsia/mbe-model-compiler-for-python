@@ -222,7 +222,7 @@ public class DerivedAttribute {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 

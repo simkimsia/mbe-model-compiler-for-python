@@ -668,6 +668,10 @@ public class MMClass {
 		// guarantees
 		// the code for a Meta-model CIM/PIM class have been emitted
 		Context.setMMClass(this);
+		if (Context.model().includeFutureAnnotations()) {
+			PythonOutput.println("from __future__ import annotations");
+			PythonOutput.println("");
+		}
 		if (Context.model().includePackageName()) {
 			PythonOutput.indent();
 			PythonOutput.println("package " + NameService.asClassLevelName(Context.model().name()) + ";");
@@ -924,7 +928,9 @@ public class MMClass {
 		}
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# Association participation instance variables");
+			PythonOutput.println("# see MMClass.ruleAssociationInstVarList");
 			PythonOutput.println("");
 			PythonOutput.indentMore();
 			if (participatesInAnyAssociations) {
@@ -969,12 +975,15 @@ public class MMClass {
 			if (Context.model().isVerbose()) {
 				PythonOutput.indent();
 				PythonOutput.println("# Constructor");
+				PythonOutput.println("# See MMClass.ruleConstructorOperation");
+
 				PythonOutput.println("");
-				PythonOutput.indentMore();
+				PythonOutput.println("# See constructEvent.ruleConstructorOperation");
 				constructEvent.ruleConstructorOperation();
 				PythonOutput.indentLess();
 			} else {
 				constructEvent.ruleConstructorOperation();
+				PythonOutput.indentLess();
 			}
 		} else {
 			PythonOutput.println("****** ERROR: Can't find an event named" + Event.defaultNewEventName);
@@ -1026,9 +1035,9 @@ public class MMClass {
 		// code implementing getters for all attributes have been emitted
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# Attribute getters");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
 			if (!attributeSet.isEmpty()) {
 				for (Attribute anAttribute : attributeSet) {
 					anAttribute.ruleGetter();
@@ -1221,7 +1230,7 @@ public class MMClass {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		if (Context.model().isVerbose()) {
 			PythonOutput.indentLess();
 		}
@@ -1321,7 +1330,7 @@ public class MMClass {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 
@@ -1456,7 +1465,7 @@ public class MMClass {
 		PythonOutput.println("return " + NameService.asInstanceLevelName(name) + "Set;");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.indentLess();
 		PythonOutput.println("");
 		PythonOutput.println("");

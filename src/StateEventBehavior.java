@@ -536,7 +536,7 @@ public class StateEventBehavior {
 			}
 			if (this.isTransition()) {
 				this.ruleTransitionActionsList();
-				PythonOutput.println("state = " + toState.nameAsQualifiedENUM() + ";");
+				PythonOutput.println("self._state = " + toState.nameAsQualifiedENUM());
 			} else {
 				if (this.isImpossible()) {
 					PythonOutput.println(
@@ -546,7 +546,6 @@ public class StateEventBehavior {
 			if (this.guard() != "true") {
 				PythonOutput.indentLess();
 				PythonOutput.indent();
-				PythonOutput.print("}");
 			} else {
 				PythonOutput.indent();
 			}
@@ -662,7 +661,7 @@ public class StateEventBehavior {
 		// otherwise fatal exception clause was emitted
 		if (!this.isIgnore()) {
 			PythonOutput.indent();
-			PythonOutput.print("//   ");
+			PythonOutput.print("#   ");
 			if (!fromState.name().equals(State.defaultNotExistsStateName)) {
 				PythonOutput.print("state was " + fromState.name());
 				if (!this.guard().equals("true")) {

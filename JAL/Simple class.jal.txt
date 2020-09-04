@@ -70,7 +70,7 @@
             x has been set to zero
          </guarantees>
          <pimaction>
-            .@i x @ = 0;
+            .@a x @ = 0
          </pimaction>
       </action>
 
@@ -83,7 +83,7 @@
             x has been set to new x
          </guarantees>
          <pimaction>
-            .@i x @ = @i new x @;
+            .@a x @ = @i new x @
          </pimaction>
       </action>
 

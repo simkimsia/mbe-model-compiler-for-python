@@ -217,7 +217,7 @@ public class State {
 			}
 			PythonOutput.indentLess();
 			PythonOutput.indent();
-			PythonOutput.println("}");
+
 		}
 		Context.clearState();
 	}

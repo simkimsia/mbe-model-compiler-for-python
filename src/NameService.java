@@ -70,6 +70,36 @@ public class NameService {
 		return formattedString;
 	}
 
+	// specific to python we want snake_style for method of attribute
+	public static String asSnakeStyleName(String originalName) {
+		// description
+		// formats originalName to match Java style for class-level names
+		// removes non-alpha and non-numeric characters
+		// makes camelCase, capitalizing after any non-alphanumeric
+		// first letter is capitalized
+		// requires
+		// originalName <> null
+		// guarantees
+		// returns a re-formatted originalName, as a String
+		originalName = originalName.trim();
+		int n = originalName.length();
+		String formattedString = "";
+
+		for (int i = 0; i < n; i++) {
+			// Converting space
+			// to underscor
+			if (originalName.charAt(i) == ' ')
+				formattedString = formattedString + '_';
+			else
+
+				// If not space, convert
+				// into lower character
+				formattedString = formattedString + Character.toLowerCase(originalName.charAt(i));
+		}
+
+		return formattedString;
+	}
+
 	public static String asInstanceLevelName(String originalName) {
 		// description
 		// formats originalName to match Java style for instance-level names
@@ -149,6 +179,8 @@ public class NameService {
 		// 2) turns text between @i and @ into an instance level name
 		// 3) turns text between @c and @ into a class level name
 		// 4) turns text between @e and @ into an enum name
+		// 5) turns text between @a and @ into an private instance attribute e.g.
+		// `self._<the_attribute>`
 		// requires
 		// originalString <> null
 		// Context.mMClass() <> null
@@ -187,6 +219,20 @@ public class NameService {
 							}
 							formattedString = formattedString + "\"";
 							break;
+						case 'a':
+							temporaryString = new String();
+							charIndex++;
+							theChar = originalString.charAt(charIndex);
+							while (theChar != '@') {
+								temporaryString = temporaryString + theChar;
+								charIndex++;
+								theChar = originalString.charAt(charIndex);
+							}
+							// @NOTE because we assume all instance attributes are private so we prepend
+							// with self._
+							formattedString = "self._" + formattedString
+									+ NameService.asSnakeStyleName(temporaryString);
+							break;
 						case 'i':
 							temporaryString = new String();
 							charIndex++;
@@ -196,7 +242,9 @@ public class NameService {
 								charIndex++;
 								theChar = originalString.charAt(charIndex);
 							}
-							formattedString = formattedString + NameService.asInstanceLevelName(temporaryString);
+							// @NOTE because we assume all instance attributes are private so we prepend
+							// with self._
+							formattedString = formattedString + NameService.asSnakeStyleName(temporaryString);
 							break;
 						case 'c':
 							temporaryString = new String();

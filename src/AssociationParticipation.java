@@ -215,12 +215,14 @@ public class AssociationParticipation {
 		// guarantees
 		// the private inst var declaration has been emitted
 		PythonOutput.indent();
+		PythonOutput.print("def _");
+		PythonOutput.print(NameService.asSnakeStyleName(participatingClass.name()));
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.print("private ");
+			PythonOutput.print("def ");
 		} else {
 			PythonOutput.print("private ArrayList<");
 		}
-		PythonOutput.print(NameService.asClassLevelName(participatingClass.name()));
+
 		if (!this.isUpperBoundMany()) {
 			PythonOutput.print(" ");
 		} else {
@@ -343,7 +345,7 @@ public class AssociationParticipation {
 			if (lowerBound != 1) {
 				PythonOutput.indentLess();
 				PythonOutput.indent();
-				PythonOutput.println("}");
+
 			}
 		} else {
 			PythonOutput.indent();
@@ -356,7 +358,7 @@ public class AssociationParticipation {
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
 			PythonOutput.indentLess();
 			PythonOutput.indent();
-			PythonOutput.println("}");
+
 		}
 	}
 
@@ -395,7 +397,7 @@ public class AssociationParticipation {
 			if (lowerBound != 1) {
 				PythonOutput.indentLess();
 				PythonOutput.indent();
-				PythonOutput.println("}");
+
 			}
 		} else {
 			PythonOutput.indent();
@@ -408,7 +410,7 @@ public class AssociationParticipation {
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
 			PythonOutput.indentLess();
 			PythonOutput.indent();
-			PythonOutput.println("}");
+
 		}
 	}
 
@@ -444,14 +446,14 @@ public class AssociationParticipation {
 		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass().name()) + " ) {");
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
+			PythonOutput.println("# requires");
 			PythonOutput.indent();
-			PythonOutput.println("//   a" + NameService.asClassLevelName(participatingClass().name()) + " != null");
+			PythonOutput.println("#   a" + NameService.asClassLevelName(participatingClass().name()) + " != null");
 			PythonOutput.indent();
-			PythonOutput.println("// guarantees");
+			PythonOutput.println("# guarantees");
 			PythonOutput.indent();
 			PythonOutput.println(
-					"//   assertion failure when this object does not have a reference back to the calling object");
+					"#   assertion failure when this object does not have a reference back to the calling object");
 		}
 		PythonOutput.indentMore();
 		PythonOutput.indent();
@@ -464,7 +466,7 @@ public class AssociationParticipation {
 		PythonOutput.println(": \"this object does not have a reference back to the calling object\";");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 
@@ -504,11 +506,11 @@ public class AssociationParticipation {
 		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
+			PythonOutput.println("# requires");
 			PythonOutput.indent();
 			PythonOutput.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
 			PythonOutput.indent();
-			PythonOutput.println("// guarantees");
+			PythonOutput.println("# guarantees");
 			PythonOutput.indent();
 			PythonOutput.println("//   both this and a" + NameService.asClassLevelName(participatingClass.name())
 					+ " are linked to each other");
@@ -529,7 +531,7 @@ public class AssociationParticipation {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 
@@ -572,11 +574,11 @@ public class AssociationParticipation {
 		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
+			PythonOutput.println("# requires");
 			PythonOutput.indent();
 			PythonOutput.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
 			PythonOutput.indent();
-			PythonOutput.println("// guarantees");
+			PythonOutput.println("# guarantees");
 			PythonOutput.indent();
 			PythonOutput.println(
 					"//   this and a" + NameService.asClassLevelName(participatingClass.name()) + " are unlinked");
@@ -600,11 +602,11 @@ public class AssociationParticipation {
 			PythonOutput.println(NameService.asInstanceLevelName(roleName) + ".remove( index );");
 			PythonOutput.indentLess();
 			PythonOutput.indent();
-			PythonOutput.println("}");
+
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 	}
 

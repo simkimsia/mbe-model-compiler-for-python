@@ -163,7 +163,7 @@ public class Event {
 		// This rule emits the constructor and its method implementation code
 		//
 		// Event.#CONSTRUCTOR_OPERATION -->
-		// 'public ' + class name + #OPERATION_FORMAL_PARAMETERS + ' {'
+		// 'def __init__(self' + #OPERATION_FORMAL_PARAMETERS + '):'
 		// #OPERATION_CONTRACT_REQUIRES_CLAUSE
 		// #OPERATION_CONTRACT_GUARANTEES_CLAUSE
 		// #CONSTRUCTOR_METHOD_BODY
@@ -175,14 +175,13 @@ public class Event {
 		// the operation and method code for this Event have been emitted
 		Context.setEvent(this);
 		PythonOutput.indent();
-		PythonOutput.print("public " + NameService.asClassLevelName(Context.mMClass().name()));
+		PythonOutput.print("def __init__(self");
 		this.ruleOperationFormalParameters();
-		PythonOutput.println(" {");
+		PythonOutput.println("):");
 		if (Context.model().isVerbose()) {
 			this.ruleOperationContractRequiresClause();
 			this.ruleOperationContractGuaranteesClause();
 		}
-		PythonOutput.indentMore();
 		PythonOutput.indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();
@@ -192,10 +191,10 @@ public class Event {
 		if (Context.model().isAssertionsOn()) {
 			this.ruleExitAssertions();
 		}
-		PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name()) + "Set.add( this );");
+		PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name()) + "Set.add( self )");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		Context.clearEvent();
 	}
 
@@ -301,7 +300,7 @@ public class Event {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 		Context.clearEvent();
 	}
@@ -325,7 +324,6 @@ public class Event {
 		// emitted
 		// Implementation notes
 		// needs to be done with Iterator to avoid trailing comma...
-		PythonOutput.print("(");
 		ArrayList<Parameter> parameterSet = Context.mMClass().eventParameterSet();
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		while (parameterIterator.hasNext()) {
@@ -338,7 +336,6 @@ public class Event {
 				PythonOutput.print(" ");
 			}
 		}
-		PythonOutput.print(")");
 	}
 
 	public void ruleOperationContractRequiresClause() {
@@ -376,16 +373,17 @@ public class Event {
 		// guarantees
 		// operation contract requires clause has been emitted
 		PythonOutput.indent();
-		PythonOutput.println("// requires");
+		PythonOutput.indentMore();
+		PythonOutput.println("# requires");
 		ArrayList<Condition> requiresConditionSet = Context.mMClass().eventRequiresSet();
 		if (!requiresConditionSet.isEmpty()) {
 			for (Condition aCondition : requiresConditionSet) {
 				PythonOutput.indent();
-				PythonOutput.println("//    " + aCondition.expression());
+				PythonOutput.println("#    " + aCondition.expression());
 			}
 		} else {
 			PythonOutput.indent();
-			PythonOutput.println("//    none");
+			PythonOutput.println("#    none");
 		}
 	}
 
@@ -415,7 +413,7 @@ public class Event {
 		// Implementation notes
 		// none
 		PythonOutput.indent();
-		PythonOutput.println("// guarantees");
+		PythonOutput.println("# guarantees");
 		Iterator<StateEventBehavior> behaviorIterator = Context.mMClass().eventBehaviorSet().iterator();
 		while (behaviorIterator.hasNext()) {
 			StateEventBehavior aBehavior = behaviorIterator.next();

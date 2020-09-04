@@ -186,7 +186,7 @@ public class Condition {
 		// guarantees
 		// this contract condition for an Action has been emitted
 		PythonOutput.indent();
-		PythonOutput.println("//   " + expression);
+		PythonOutput.println("#   " + expression);
 	}
 
 	public void ruleAssertCondition() {

@@ -362,7 +362,9 @@ public class Action {
 		if (returnRange != null) {
 			PythonOutput.print(" aResult = ");
 		}
-		PythonOutput.print("this." + NameService.asInstanceLevelName(name));
+		// originally it was asInstanceLevelName but I replace with SnakeStyle
+		// PythonOutput.print("this." + NameService.asInstanceLevelName(name));
+		PythonOutput.print("self._" + NameService.asSnakeStyleName(name));
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		if (parameterIterator.hasNext()) {
 			PythonOutput.print("( ");
@@ -373,9 +375,9 @@ public class Action {
 					PythonOutput.print(", ");
 				}
 			}
-			PythonOutput.println(" );");
+			PythonOutput.println(" )");
 		} else {
-			PythonOutput.println("();");
+			PythonOutput.println("()");
 		}
 	}
 
@@ -402,16 +404,13 @@ public class Action {
 		// the code for the private method implementation of this Action has been
 		// emitted
 		PythonOutput.indent();
-		PythonOutput.print("private ");
-		if (returnRange != null) {
-			PythonOutput.print(returnRange.pIMRunTimeType() + " ");
-		} else {
-			PythonOutput.print("void ");
-		}
-		PythonOutput.print(NameService.asInstanceLevelName(name));
+		PythonOutput.print("def _");
+		PythonOutput.print(NameService.asSnakeStyleName(name));
 		this.ruleActionFormalParameters();
+		this.ruleEndReturnTypeForAction(returnRange);
+		PythonOutput.println(":");
+
 		this.ruleSpecifyContract();
-		PythonOutput.indentMore();
 		PythonOutput.indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();
@@ -422,8 +421,28 @@ public class Action {
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
 		PythonOutput.println("");
+	}
+
+	public void ruleEndReturnTypeForAction(Range returnRange) {
+		// description
+		// this rule emits the formal parameters for the implementation of an Action
+		//
+		// Action.#ACTION_FORMAL_PARAMETERS -->
+		// if this action has parameters
+		// then '(self,' + foreach aParameter on action
+		// aParameter.#FORMAL_PARAMETER + ', ' (except after last one) +
+		// ')' +
+		// otherwise '(self)'
+		//
+		// requires
+		// none
+		// guarantees
+		// the code for the private method implementation of this Action has been
+		// emitted
+		if (returnRange != null) {
+			PythonOutput.print(" -> " + returnRange.pIMRunTimeType());
+		}
 	}
 
 	public void ruleActionFormalParameters() {
@@ -432,10 +451,10 @@ public class Action {
 		//
 		// Action.#ACTION_FORMAL_PARAMETERS -->
 		// if this action has parameters
-		// then '( ' + foreach aParameter on action
+		// then '(self,' + foreach aParameter on action
 		// aParameter.#FORMAL_PARAMETER + ', ' (except after last one) +
-		// ') {' +
-		// otherwise '() {'
+		// ')' +
+		// otherwise '(self)'
 		//
 		// requires
 		// none
@@ -444,7 +463,7 @@ public class Action {
 		// emitted
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		if (parameterIterator.hasNext()) {
-			PythonOutput.print("( ");
+			PythonOutput.print("(self, ");
 			while (parameterIterator.hasNext()) {
 				Parameter aParameter = parameterIterator.next();
 				aParameter.ruleFormalParameter();
@@ -452,9 +471,10 @@ public class Action {
 					PythonOutput.print(", ");
 				}
 			}
-			PythonOutput.println(" ) {");
+
+			PythonOutput.print(")");
 		} else {
-			PythonOutput.println("() {");
+			PythonOutput.print("(self)");
 		}
 	}
 
@@ -481,24 +501,25 @@ public class Action {
 		// the contract for the method has been emitted
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
+			PythonOutput.indentMore();
+			PythonOutput.println("# requires");
 			if (!requiresSet.isEmpty()) {
 				for (Condition aRequiresClause : requiresSet) {
 					aRequiresClause.ruleContractCondition();
 				}
 			} else {
 				PythonOutput.indent();
-				PythonOutput.println("//   none");
+				PythonOutput.println("#   none");
 			}
 			PythonOutput.indent();
-			PythonOutput.println("// guarantees");
+			PythonOutput.println("# guarantees");
 			if (!guaranteesSet.isEmpty()) {
 				for (Condition aGuaranteesClause : guaranteesSet) {
 					aGuaranteesClause.ruleContractCondition();
 				}
 			} else {
 				PythonOutput.indent();
-				PythonOutput.println("//   none");
+				PythonOutput.println("#   none");
 			}
 		}
 	}

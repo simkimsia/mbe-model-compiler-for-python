@@ -120,6 +120,9 @@ public class Model {
 	private boolean isSafeModeOn;
 	private boolean includePackageName;
 
+	// python specific PIM Overlay instance variables
+	private boolean includeFutureAnnotations = true;
+
 	// Model compiler instance variables
 	// none
 
@@ -220,6 +223,17 @@ public class Model {
 		// guarantees
 		// returns the current 'include package name' setting for this model
 		return includePackageName;
+	}
+
+	public boolean includeFutureAnnotations() {
+		// description
+		// this operation is about including 'package <modelname>' in generated source
+		// code
+		// requires
+		// none
+		// guarantees
+		// returns the current 'include package name' setting for this model
+		return includeFutureAnnotations;
 	}
 
 	// Modifiers
@@ -352,6 +366,10 @@ public class Model {
 			PythonOutput.println("package " + NameService.asClassLevelName(Context.model().name()) + ";");
 			PythonOutput.println("");
 		}
+		if (Context.model().includeFutureAnnotations()) {
+			PythonOutput.println("from __future__ import annotations");
+			PythonOutput.println("");
+		}
 		PythonOutput.indent();
 		PythonOutput.println("public class SafeMode {");
 		PythonOutput.println("");
@@ -372,10 +390,10 @@ public class Model {
 		PythonOutput.println("public static void safeModeCheck() {");
 		if (isVerboseOn) {
 			PythonOutput.indent();
-			PythonOutput.println("// requires");
-			PythonOutput.println("//    none");
-			PythonOutput.println("// requires");
-			PythonOutput.println("//    all 'safe mode' class invariant checks have been run-time checked in "
+			PythonOutput.println("# requires");
+			PythonOutput.println("#    none");
+			PythonOutput.println("# requires");
+			PythonOutput.println("#    all 'safe mode' class invariant checks have been run-time checked in "
 					+ Context.model().name());
 		}
 		PythonOutput.indentMore();
@@ -390,16 +408,16 @@ public class Model {
 			PythonOutput.println("a" + NameService.asClassLevelName(aClass.name()) + ".classInvariantsCheck();");
 			PythonOutput.indentLess();
 			PythonOutput.indent();
-			PythonOutput.println("}");
+
 		}
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 		PythonOutput.println("");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
-		PythonOutput.println("}");
+
 		PythonOutput.println("");
 		PythonOutput.println("");
 		PythonOutput.closeJALOutputFile();
