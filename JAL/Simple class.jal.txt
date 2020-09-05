@@ -2,7 +2,7 @@
    Simple class
 
    <javasourcecodedirectory>
-      /Users/kim/eclipse-workspace/
+      /Users/kim/eclipse-workspace/mbe-python-model-compiler/generated/
 
    <isverboseon>
       true
@@ -130,10 +130,10 @@
       </transition>
 
       <pimhelper>
-         .// comment 1
-         .// helper comment 2
-         .	// helper comment 3
-         .// comment 4
+         .# comment 1
+         .# helper comment 2
+         .	# helper comment 3
+         .# comment 4
       </pimhelper>
 
    </class>

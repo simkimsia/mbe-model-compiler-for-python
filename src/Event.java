@@ -284,7 +284,7 @@ public class Event {
 		if (returnRange != null) {
 			PythonOutput.print(returnRange.pIMRunTimeType() + " ");
 		} else {
-			PythonOutput.print("None ");
+			PythonOutput.print("None");
 		}
 
 		PythonOutput.println(" :");
@@ -292,7 +292,6 @@ public class Event {
 			this.ruleOperationContractRequiresClause();
 			this.ruleOperationContractGuaranteesClause();
 		}
-		PythonOutput.indentMore();
 		PythonOutput.indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();

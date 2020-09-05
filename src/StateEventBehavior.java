@@ -589,24 +589,29 @@ public class StateEventBehavior {
 		// subtype Transition generates calls to the (private) transition actions
 		// Guards are included in the if-then logic when necessary
 		if (!this.isIgnore()) {
-			PythonOutput.print("if( state == " + fromState.nameAsQualifiedENUM());
+			PythonOutput.print("if self._state == " + fromState.nameAsQualifiedENUM());
 			this.ruleOptionalGuard();
-			PythonOutput.println(" ) {");
+			PythonOutput.println(":");
 			if (this.isTransition()) {
 				PythonOutput.indentMore();
 				PythonOutput.indent();
 				this.ruleTransitionActionsList();
 				if (this.fromState() != this.toState()) {
-					PythonOutput.println("state = " + toState.nameAsQualifiedENUM() + ";");
+					PythonOutput.println("self._state = " + toState.nameAsQualifiedENUM());
 					if (this.toState() == Context.mMClass().stateNamed(State.defaultNotExistsStateName)) {
 						PythonOutput.indent();
-						PythonOutput.println(
-								NameService.asInstanceLevelName(Context.mMClass().name()) + "Set.remove( this );");
+						// instead of using the class method to add to the set i simply add to the class
+						// attribute
+						// PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name())
+						// + "Set.remove( self )");
+						// this should be ClassName.ClassNameSet.remove(self)
+						PythonOutput.println(NameService.asClassLevelName(Context.mMClass().name()) + "."
+								+ NameService.asClassLevelName(Context.mMClass().name()) + "Set.remove( self )");
+
 					}
 				}
 				PythonOutput.indentLess();
 				PythonOutput.indent();
-				PythonOutput.print("}");
 			} else {
 				if (this.isImpossible()) {
 					PythonOutput.indentMore();

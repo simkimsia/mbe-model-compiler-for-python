@@ -141,7 +141,7 @@ public class Parameter {
 		// none
 		// guarantees
 		// the parameter name, as an actual parameter, has been emitted
-		PythonOutput.print(NameService.asInstanceLevelName(name));
+		PythonOutput.print(NameService.asSnakeStyleName(name));
 	}
 
 }

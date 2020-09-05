@@ -136,7 +136,8 @@ public class State {
 		// Context.mMClass <> null
 		// guarantees
 		// returns the qualified state name
-		return Context.mMClass().stateAttributeEnumRTType() + "." + this.nameAsENUM();
+		return NameService.asClassLevelName(Context.mMClass().name()) + "."
+				+ Context.mMClass().stateAttributeEnumRTType() + "." + this.nameAsENUM();
 	}
 
 	public ArrayList<Action> allStateActions() {

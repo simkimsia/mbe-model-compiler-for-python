@@ -1169,9 +1169,10 @@ public class MMClass {
 		}
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# Private transition actions");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
+
 			if (!actionSet.isEmpty()) {
 				for (Action anAction : actionSet) {
 					anAction.ruleDefinePrivateAction();
@@ -1375,9 +1376,9 @@ public class MMClass {
 		// the PIM overlay helper code has been emitted
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# PIM Overlay helper code");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
 			if (!pIMHelperCode.isEmpty()) {
 				for (String aLineOfHelperCode : pIMHelperCode) {
 					PythonOutput.indent();
@@ -1530,9 +1531,9 @@ public class MMClass {
 		}
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# Association participation link and unlink services");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
 			if (participatesInAnyAssociations) {
 				for (Association anAssociation : Association.allAssociations()) {
 					if (anAssociation.involvesClass(this)) {
@@ -1542,6 +1543,7 @@ public class MMClass {
 			} else {
 				if (Context.model().isVerbose()) {
 					PythonOutput.indent();
+					PythonOutput.indentMore();
 					PythonOutput.println("# none");
 				}
 			}

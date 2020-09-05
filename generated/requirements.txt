@@ -1,0 +1,4 @@
+# Testing
+# ------------------------------------------------------------------------------
+pytest==6.0.1  # https://github.com/pytest-dev/pytest
+mypy==0.782  # https://github.com/python/mypy
