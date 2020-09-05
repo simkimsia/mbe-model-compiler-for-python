@@ -692,6 +692,7 @@ public class MMClass {
 		this.rulePIMConstantsList();
 		this.ruleStateEnumDeclaration();
 		this.ruleAttributeInstVarList();
+		this.ruleClassVarList();
 		this.ruleAssociationInstVarList();
 		this.ruleConstructorOperation();
 		this.ruleAttributeGettersList();
@@ -707,7 +708,7 @@ public class MMClass {
 			this.ruleImplementReferenceCheckOperations();
 		}
 		this.rulePIMHelperCode();
-		this.ruleAllMembersAccessor();
+		// this.ruleAllMembersAccessor(); this is now replaced with the ruleClassVarList
 		this.ruleAssociationLinkUnlinkServices();
 		PythonOutput.indentLess();
 		PythonOutput.println("");
@@ -1073,6 +1074,7 @@ public class MMClass {
 		// demand
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
+			PythonOutput.indentMore();
 			PythonOutput.println("# Derived attributes");
 			PythonOutput.println("");
 			PythonOutput.indentMore();
@@ -1116,7 +1118,7 @@ public class MMClass {
 			PythonOutput.indent();
 			PythonOutput.println("# Pushed events");
 			PythonOutput.println("");
-			PythonOutput.indentMore();
+
 			if ((eventSet.size() > 1)) {
 				for (Event anEvent : eventSet) {
 					if (!anEvent.name().equals(Event.defaultNewEventName)) {
@@ -1125,6 +1127,7 @@ public class MMClass {
 				}
 			} else {
 				if (Context.model().isVerbose()) {
+					PythonOutput.indentMore();
 					PythonOutput.indent();
 					PythonOutput.println("# none");
 					PythonOutput.println("");
@@ -1395,6 +1398,42 @@ public class MMClass {
 				PythonOutput.println(NameService.formatActionStmt(aLineOfHelperCode));
 			}
 		}
+		PythonOutput.println("");
+	}
+
+	public void ruleClassVarList() {
+		// description
+		// this rule emits code to provide ClassVar primarily to replace the All member
+		// accessor
+		// the class
+		//
+		// Class.#All_MEMBERS_ACCESSOR -->
+		// ClassNameSet: ClassVar[List[ClassName]] = []
+		//
+		//
+		// Note that members are automatically added to ClassNameSet in generated
+		// constructor code. No method is needed for accessor to keep things pythonic
+		// There is, however, no automatic removal. One option is when app client code
+		// is doing the
+		// iteration it can ignore objects in the set whose state is "DOESNTEXIST", as
+		// in:
+		//
+		//
+		// code that provides access to all members of the class has been emitted
+		if (Context.model().isVerbose()) {
+			PythonOutput.indent();
+			PythonOutput.indentMore();
+			PythonOutput.println("# Class level attribute");
+			PythonOutput.println("# All class members accessor");
+			PythonOutput.println("");
+		}
+		PythonOutput.indent();
+
+		PythonOutput.println(NameService.asClassLevelName(name) + "Set" + ": ClassVar[List["
+				+ NameService.asClassLevelName(name) + "]] = []");
+		PythonOutput.indent();
+		PythonOutput.indentLess();
+		PythonOutput.println("");
 		PythonOutput.println("");
 	}
 

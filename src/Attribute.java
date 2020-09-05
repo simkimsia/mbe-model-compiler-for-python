@@ -212,17 +212,18 @@ public class Attribute {
 		// This rule emits the public getter for this attribute
 		//
 		// Attribute.#GETTER -->
-		// 'public ' + #PIM_OVERLAY_RTTYPE + this.instanceVariableName() + '() {' +
-		// ' return ' + this.InstanceVariableName() + ';' +
-		// '}'
+		// '@property'
+		// 'def ' + this.instanceVariableName() + '() ->' + #PIM_OVERLAY_RTTYPE + ':' +
+		// ' return self._' + this.InstanceVariableName()
 		//
 		// requires
 		// this is not a derived attribute
 		// guarantees
 		// the public instance variable getter code for this attribute has been emitted
 		PythonOutput.indent();
-		PythonOutput.print("public " + definedRange.pIMRunTimeType());
-		PythonOutput.println(" " + NameService.asInstanceLevelName(name) + "() {");
+		PythonOutput.println("@property");
+		PythonOutput.print("def " + NameService.asInstanceLevelName(name) + "(self) -> ");
+		PythonOutput.println(definedRange.pIMRunTimeType() + ":");
 		if (Context.model().isVerbose()) {
 			PythonOutput.indent();
 			PythonOutput.indentMore();
@@ -234,9 +235,8 @@ public class Attribute {
 			PythonOutput.indent();
 			PythonOutput.println("#   returns the " + name);
 		}
-		PythonOutput.indentMore();
 		PythonOutput.indent();
-		PythonOutput.println("return " + NameService.asInstanceLevelName(name) + ";");
+		PythonOutput.println("return self._" + NameService.asInstanceLevelName(name) + "");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
 

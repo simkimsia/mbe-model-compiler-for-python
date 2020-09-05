@@ -102,15 +102,15 @@ public class Parameter {
 		// (private) method implementing the Action
 		//
 		// Parameter.#FORMAL_PARAMETER -->
-		// output PIM Overlay RT Type + " " + formatted parameter name
+		// output formatted parameter name + ":" + PIM Overlay RT Type
 		//
 		// requires
 		// none
 		// guarantees
 		// the run-time type (from the PIM Overlay) and the parameter name have been
 		// emitted
-		PythonOutput.print(NameService.formatActionStmt(definedRange.pIMRunTimeType()) + " "
-				+ NameService.asInstanceLevelName(name));
+		PythonOutput.print(
+				NameService.asSnakeStyleName(name) + ":" + NameService.formatActionStmt(definedRange.pIMRunTimeType()));
 	}
 
 	public void ruleAssertParameter() {

@@ -191,7 +191,13 @@ public class Event {
 		if (Context.model().isAssertionsOn()) {
 			this.ruleExitAssertions();
 		}
-		PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name()) + "Set.add( self )");
+		// instead of using the class method to add to the set i simply add to the class
+		// attribute
+		// PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name())
+		// + "Set.add( self )");
+		// this should be ClassName.ClassNameSet.append(self)
+		PythonOutput.println(NameService.asClassLevelName(Context.mMClass().name()) + "."
+				+ NameService.asClassLevelName(Context.mMClass().name()) + "Set.append( self )");
 		PythonOutput.indentLess();
 		PythonOutput.indent();
 
@@ -233,7 +239,7 @@ public class Event {
 		// including the operation signature
 		//
 		// Event.#PUSHED_EVENT_OPERATION -->
-		// 'public ' +
+		// 'def ' +
 		// if this event has a non-blank PIM return run time type
 		// then PIM return run time type + ' ' +
 		// otherwise 'void ' +
@@ -260,15 +266,28 @@ public class Event {
 		// the operation and method code for this Event have been emitted
 		Context.setEvent(this);
 		PythonOutput.indent();
-		PythonOutput.print("public ");
+		PythonOutput.print("def ");
+		// method name here
+		PythonOutput.print(NameService.asInstanceLevelName(name));
+		// has self, because instance method
+		PythonOutput.print("(self");
+		// in case got params so need to add ,
+		if (Context.mMClass().eventParameterSet().size() > 0) {
+			PythonOutput.print(",");
+		}
+		// parameters
+		this.ruleOperationFormalParameters();
+		// has self, because instance method
+		PythonOutput.print(")");
+		// return
+		PythonOutput.print(" -> ");
 		if (returnRange != null) {
 			PythonOutput.print(returnRange.pIMRunTimeType() + " ");
 		} else {
-			PythonOutput.print("void ");
+			PythonOutput.print("None ");
 		}
-		PythonOutput.print(NameService.asInstanceLevelName(name));
-		this.ruleOperationFormalParameters();
-		PythonOutput.println(" {");
+
+		PythonOutput.println(" :");
 		if (Context.model().isVerbose()) {
 			this.ruleOperationContractRequiresClause();
 			this.ruleOperationContractGuaranteesClause();
