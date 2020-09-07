@@ -1,0 +1,942 @@
+<jalmodel>
+   Game of Life
+
+   <javasourcecodedirectory>
+      /Users/kim/eclipse-workspace/mbe-python-model-compiler/generated/
+
+   <isverboseon>
+      true
+
+   <isassertionson>
+      false
+
+   <issafemodeon>
+      false
+
+   <includepackagename>
+      false
+
+   <range>
+      unconstrained
+      <span>
+         <rttype>
+            String
+   </range>
+
+   <range>
+      Colony reference
+      <span>
+         <rttype>
+            Colony
+   </range>
+
+   <range>
+      Colony set
+      <span>
+         <rttype>
+            ArrayList<Colony>
+   </range>
+
+   <range>
+      Square reference
+      <span>
+         <rttype>
+            Square
+   </range>
+
+   <range>
+      Square set
+      <span>
+         <rttype>
+            ArrayList<Square>
+   </range>
+
+   <range>
+      TorF
+      <span>
+         <rttype>
+            boolean
+   </range>
+
+   <range>
+      cell age
+      <span>
+         <rttype>
+            int
+         <assert>
+            $ >= 0
+   </range>
+
+   <range>
+      int
+      <span>
+         <rttype>
+            int
+   </range>
+
+   <class>
+      Colony
+
+      <pimimport>
+         from enum import Enum
+         from typing import ClassVar, List
+      </pimimport>
+
+      <attribute>
+         height
+            <range>
+               int
+      </attribute>
+
+      <attribute>
+         width
+            <range>
+               int
+      </attribute>
+
+      <attribute>
+         generation
+            <range>
+               int
+      </attribute>
+
+      <attribute>
+         state
+      </attribute>
+
+      <action>
+         derive cell count
+         <guarantees>
+            returns the number of living cells in the colony
+         </guarantees>
+         <pimaction>
+            .return @a is NW corner @.@a cell count @();
+         </pimaction>
+      </action>
+
+      <derivedattribute>
+         cell count
+         <range>
+            int
+         <derivationaction>
+            derive cell count
+      </derivedattribute>
+
+      <action>
+         initializer
+         <parameter>
+            a width
+            int
+         <parameter>
+            a height
+            int
+         <requires>
+            a width > 0
+            <assert>
+               @a a width @ > 0
+         </requires>
+         <requires>
+            a height > 0
+            <assert>
+               @a a height @ > 0
+         </requires>
+         <guarantees>
+            this colony has been initialized
+         </guarantees>
+         <pimaction>
+            .# initialize the colony attributes
+            .@a width @ = @i a width @;
+            .@a height @ = @i a height @;
+            .@a generation @ = 0;
+            .
+            .# create the first square in the colony and link to it
+            .@a is NW corner @ = new @c Square @();
+            .@a is NW corner @.@i link is NW corner @( this );
+            .
+            .# create the rest of the first row in the colony
+            .@c Square @ previousSquareOfThisRow = @i is NW corner @;
+            .for( int widthCount = 2; widthCount <= @i width @; widthCount++ ) {
+            .   @c Square @ newSquare = new @c Square @();
+            .   newSquare.@i connect W @( previousSquareOfThisRow );
+            .   previousSquareOfThisRow = newSquare;
+            .}
+            .
+            .# get ready to create the rest of the rows
+            .@c Square @ westMostSquareOfRowAbove = @i is NW corner @;
+            .
+            .# now build the rest of the colony
+            .for( int heightCount = 2; heightCount <= @i height @; heightCount++ ) {
+            .
+            .   # create a new row of squares, starting with the first square in the row
+            .   @c Square @ westMostSquareOfThisRow = new @c Square @();
+            .   previousSquareOfThisRow = westMostSquareOfThisRow;
+            .   westMostSquareOfThisRow.@i connect N @( westMostSquareOfRowAbove );
+            .   if( westMostSquareOfRowAbove.@i East @() != null ) {
+            .      westMostSquareOfThisRow.@i connect NE @( westMostSquareOfRowAbove.@i East @() );
+            .   }
+            .
+            .   # get ready to create the rest of this new row
+            .   @c Square @ nWSquareOfRowAbove = westMostSquareOfRowAbove;
+            .   @c Square @ nSquareOfRowAbove = nWSquareOfRowAbove.@i East @();
+            .   @c Square @ nESquareOfRowAbove = null;
+            .   if( nSquareOfRowAbove.@i East @() != null ) {
+            .      nESquareOfRowAbove = nSquareOfRowAbove.@i East @();
+            .   }
+            .
+            .   # create the rest of this row
+            .   for( int widthCount = 2; widthCount <= @i width @; widthCount++ ) {
+            .
+            .      # make the next square in the row and connect it on its W side
+            .      @c Square @ newSquare = new @c Square @();
+            .      newSquare.@i connect W @( previousSquareOfThisRow );
+            .      previousSquareOfThisRow = newSquare;
+            .
+            .      # also connect it to its neighbor squares in the row above
+            .      if( nWSquareOfRowAbove != null ) {
+            .         newSquare.@i connect NW @( nWSquareOfRowAbove );
+            .      }
+            .      newSquare.@i connect N @( nSquareOfRowAbove );
+            .      if( nESquareOfRowAbove != null ) {
+            .         newSquare.@i connect NE @( nESquareOfRowAbove );
+            .      }
+            .
+            .      # get ready to connect the next new square to the row above
+            .      nWSquareOfRowAbove = nSquareOfRowAbove;
+            .      nSquareOfRowAbove = nESquareOfRowAbove;
+            .      if( nSquareOfRowAbove != null && nESquareOfRowAbove.@i East @() != null ) {
+            .         nESquareOfRowAbove = nESquareOfRowAbove.@i East @();
+            .      } else {
+            .         nESquareOfRowAbove = null;
+            .      }
+            .
+            .   }
+            .
+            .   # the new row of squares has been completed, get ready for the next new row (if any)
+            .   westMostSquareOfRowAbove = westMostSquareOfThisRow;
+            .   nWSquareOfRowAbove = null;
+            .   nSquareOfRowAbove = westMostSquareOfRowAbove;
+            .   if( nSquareOfRowAbove.@i East @() != null ) {
+            .      nESquareOfRowAbove = nSquareOfRowAbove.@i East @();
+            .   } else {
+            .      nESquareOfRowAbove = null;
+            .   }
+            .
+            .}
+            .
+            .@i is NW corner @.@i initialized @();
+         </pimaction>
+      </action>
+
+      <action>
+         display colony
+         <guarantees>
+            the whole colony has been displayed
+         </guarantees>
+         <pimaction>
+            .System.out.println();
+            .System.out.println( @s-- Generation @ + @i generation @ + @s      cell count = @ + this.@i cell count @() );
+            .System.out.println();
+            .@i is NW corner @.@i display @();
+            .System.out.println();
+         </pimaction>
+      </action>
+
+      <action>
+         set a square
+         <parameter>
+            an x
+            int
+         <parameter>
+            a y
+            int
+         <requires>
+            1 <= an x <= width
+            <assert>
+               @i an x @ > 0 && @i an x @ <= @i width @
+         </requires>
+         <requires>
+            1<= a y <= height
+            <assert>
+               @i a y @ > 0 && @i a y @ <= @i height @
+         </requires>
+         <guarantees>
+            the square with coordinates x,y has been set to alive
+         </guarantees>
+         <pimaction>
+            .@i is NW corner @.@i set @( @i an x @ - 1, @i height @ - @i a y @ );
+         </pimaction>
+      </action>
+
+      <action>
+         compute next generation
+         <guarantees>
+            the next generation of the colony has been computed
+         </guarantees>
+         <pimaction>
+            .@i is NW corner @.@i set next generation @();
+            .@i is NW corner @.@i advance @();
+            .@i generation @++;
+         </pimaction>
+      </action>
+
+      <state>
+         Exists
+      </state>
+
+      <state>
+         Doesn't exist
+      </state>
+
+      <event>
+         <<new>>
+      </event>
+
+      <event>
+         <<destroy>>
+      </event>
+
+      <event>
+         display
+      </event>
+
+      <event>
+         set square
+      </event>
+
+      <event>
+         next generation
+      </event>
+
+      <transition>
+         Doesn't exist
+         <<new>>
+         Exists
+         <transitionaction>
+            initializer
+      </transition>
+
+      <transition>
+         Exists
+         <<destroy>>
+         Doesn't exist
+      </transition>
+
+      <transition>
+         Exists
+         display
+         Exists
+         <transitionaction>
+            display colony
+      </transition>
+
+      <transition>
+         Exists
+         set square
+         Exists
+         <transitionaction>
+            set a square
+      </transition>
+
+      <transition>
+         Exists
+         next generation
+         Exists
+         <transitionaction>
+            compute next generation
+      </transition>
+
+   </class>
+
+   <class>
+      Square
+
+      <pimimport>
+         from enum import Enum
+         from typing import ClassVar, List
+      </pimimport>
+
+      <pimconstant>
+         private static int maxAge = 10
+      </pimconstant>
+
+      <attribute>
+         is occupied
+            <range>
+               TorF
+      </attribute>
+
+      <attribute>
+         age
+            <range>
+               cell age
+      </attribute>
+
+      <attribute>
+         will be occupied
+            <range>
+               TorF
+      </attribute>
+
+      <attribute>
+         state
+      </attribute>
+
+      <action>
+         derive living neighbors?
+         <guarantees>
+            returns the number of living neighbors around this square
+         </guarantees>
+         <pimaction>
+            .int neighbors = 0;
+            .if( @i N @ != null && @i N @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i NE @ != null && @i NE @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i E @ != null && @i E @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i SE @ != null && @i SE @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i S @ != null && @i S @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i SW @ != null && @i SW @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i W @ != null && @i W @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .if( @i NW @ != null && @i NW @.@i is occupied @() ) {
+            .   neighbors++;
+            .}
+            .return neighbors;
+         </pimaction>
+      </action>
+
+      <derivedattribute>
+         living neighbors?
+         <range>
+            int
+         <derivationaction>
+            derive living neighbors?
+      </derivedattribute>
+
+      <action>
+         derive East?
+         <guarantees>
+            the east square of this one has been returned
+         </guarantees>
+         <pimaction>
+            .return @i e @;
+         </pimaction>
+      </action>
+
+      <derivedattribute>
+         East?
+         <range>
+            Square reference
+         <derivationaction>
+            derive East?
+      </derivedattribute>
+
+      <action>
+         derive cell count?
+         <guarantees>
+            returned the number of living cells in the colony including, and after, this
+         </guarantees>
+         <pimaction>
+            .int liveCells = 0;
+            .
+            .# count how many living cells there are after this one
+            .if( @i E @ != null ) {
+            .    liveCells = @i E @.@i cell count @();
+            .}
+            .if( @i W @ == null && @i S @ != null ) {
+            .   liveCells += @i S @.@i cell count @();
+            .}
+            .
+            .# count this cell, if it is alive
+            .if( @i is occupied @() ) {
+            .   liveCells++;
+            .}
+            .
+            .return liveCells;
+         </pimaction>
+      </action>
+
+      <derivedattribute>
+         cell count?
+         <range>
+            int
+         <derivationaction>
+            derive cell count?
+      </derivedattribute>
+
+      <action>
+         initializer
+         <guarantees>
+            this square has been initialized
+         </guarantees>
+         <pimaction>
+            .@i is occupied @ = false;
+            .@i age @ = 0;
+            .@i will be occupied @ = false;
+         </pimaction>
+      </action>
+
+      <action>
+         connect north
+         <parameter>
+            a square
+            Square reference
+         <requires>
+            a square is not null
+            <assert>
+               @i a square @ != null
+         </requires>
+         <guarantees>
+            this square is connected with its north neighbor
+         </guarantees>
+         <pimaction>
+            .@i N @ = @i a square @;
+            .@i a square @.@i link S @( this );
+         </pimaction>
+      </action>
+
+      <action>
+         connect northeast
+         <parameter>
+            a square
+            Square reference
+         <requires>
+            a square is not null
+            <assert>
+               @i a square @ != null
+         </requires>
+         <guarantees>
+            this square is connected with its northeast neighbor
+         </guarantees>
+         <pimaction>
+            .@i NE @ = @i a square @;
+            .@i a square @.@i link SW @( this );
+         </pimaction>
+      </action>
+
+      <action>
+         get ready
+         <guarantees>
+            this square's E neighbor, if any, has also been made ready
+         </guarantees>
+         <guarantees>
+            if this square is W most, its S neighbor has also been made ready
+         </guarantees>
+         <pimaction>
+            .if( @i E @ != null ) {
+            .    @i E @.@i initialized @();
+            .}
+            .if( @i W @ == null && @i S @ != null ) {
+            .   @i S @.@i initialized @();
+            .}
+         </pimaction>
+      </action>
+
+      <action>
+         compute next generation
+         <guarantees>
+            will be occupied has been properly set for the next generation
+         </guarantees>
+         <guarantees>
+            this square's E neighbor, if any, has also been set
+         </guarantees>
+         <guarantees>
+            if this square is W most, its S neighbor is also been set
+         </guarantees>
+         <pimaction>
+            .# first, figure out what happens to this square going into the next generation
+            .if( @i is occupied @ ) {
+            .   # this square has a living cell in it
+            .   if( ( @i living neighbors @() == 2 || @i living neighbors @() == 3 ) && @i age @ < maxAge ) {
+            .      # the cell has the right number of living neighbors and is not to old, so it survives
+            .      @i will be occupied @ = true;
+            .   } else {
+            .      # the cell doesn't have the right number of living neighbors or is too old, so it dies
+            .      @i will be occupied @ = false;
+            .   }
+            .} else {
+            .   # this square does not have a living cell in it
+            .   if( @i living neighbors @() == 3 ) {
+            .      # there are the right number of living neighbors, so a new cell is born
+            .      @i will be occupied @ = true;
+            .   } else {
+            .      # there are not the right number of living neighbors, so this square stays empty
+            .      @i will be occupied @ = false;
+            .   }
+            .}
+            .
+            .# then figure out the rest of the colony
+            .if( @i E @ != null ) {
+            .    @i E @.@i set next generation @();
+            .}
+            .if( @i W @ == null && @i S @ != null ) {
+            .   @i S @.@i set next generation @();
+            .}
+         </pimaction>
+      </action>
+
+      <action>
+         move to next generation
+         <guarantees>
+            this square has advanced to the next generation
+         </guarantees>
+         <guarantees>
+            this square's E neighbor, if any, has also advanced
+         </guarantees>
+         <guarantees>
+            if this square is W most, its S neighbor has also advanced
+         </guarantees>
+         <pimaction>
+            .# first, advance this square to the next generation
+            .if( @i is occupied @ && @i will be occupied @ ) {
+            .   # this cell survives, so increase its age
+            .   @i age @++;
+            .} else {
+            .   if( !@i is occupied @ && @i will be occupied @ ) {
+            .      # a new cell was born, set its age to zero
+            .      @i is occupied @ = true;
+            .      @i age @ = 0;
+            .   } else {
+            .      # the previous cell died or the square remains empty
+            .      @i is occupied @ = false;
+            .      @i age @ = 0;
+            .   }
+            .}
+            .@i will be occupied @ = false;
+            .
+            .# then advance the rest of the colony
+            .if( @i E @ != null ) {
+            .    @i E @.@i advance @();
+            .}
+            .if( @i W @ == null && @i S @ != null ) {
+            .   @i S @.@i advance @();
+            .}
+         </pimaction>
+      </action>
+
+      <action>
+         show square status
+         <guarantees>
+            this square has displayed its current status
+         </guarantees>
+         <guarantees>
+            this square's E neighbor, if any, has also displayed
+         </guarantees>
+         <guarantees>
+            if this square is W most, its S neighbor has also displayed
+         </guarantees>
+         <pimaction>
+            .# first, display the status of this square
+            .if( @i is occupied @ ) {
+            .   System.out.print( @sO @ );
+            .} else {
+            .   System.out.print( @s. @ );
+            .}
+            .# then display the rest of the colony
+            .if( @i E @ != null ) {
+            .    @i E @.@i display @();
+            .} else {
+            .   System.out.println();
+            .}
+            .if( @i W @ == null && @i S @ != null ) {
+            .   @i S @.@i display @();
+            .}
+         </pimaction>
+      </action>
+
+      <action>
+         connect northwest
+         <parameter>
+            a square
+            Square reference
+         <requires>
+            a square is not null
+            <assert>
+               @i a square @ != null
+         </requires>
+         <guarantees>
+            this square is connected with its northwest neighbor
+         </guarantees>
+         <pimaction>
+            .@i NW @ = @i a square @;
+            .@i a square @.@i link SE @( this );
+         </pimaction>
+      </action>
+
+      <action>
+         connect west
+         <parameter>
+            a square
+            Square reference
+         <requires>
+            a square is not null
+            <assert>
+               @i a square @ != null
+         </requires>
+         <guarantees>
+            this square is connected with its west neighbor
+         </guarantees>
+         <pimaction>
+            .@i W @ = @i a square @;
+            .@i a square @.@i link E @( this );
+         </pimaction>
+      </action>
+
+      <action>
+         set a square
+         <parameter>
+            how far across
+            int
+         <parameter>
+            how far down
+            int
+         <requires>
+            0 <= how far across <= width
+         </requires>
+         <requires>
+            0 <= how far down <= height
+         </requires>
+         <guarantees>
+            if this is the one it has been set, otherwise request forwarded
+         </guarantees>
+         <pimaction>
+            .if( @i how far down @ == 0 ) {
+            .   if( @i how far across @ == 0 ) {
+            .      @i is occupied @ = true;
+            .   } else {
+            .      @i E @.set( @i how far across @ - 1, @i how far down @ );
+            .   }
+            .} else {
+            .   @i S @.set( @i how far across @ , @i how far down @ - 1 );
+            .}
+         </pimaction>
+      </action>
+
+      <state>
+         Exists
+      </state>
+
+      <state>
+         Doesn't exist
+      </state>
+
+      <state>
+         Ready
+      </state>
+
+      <event>
+         <<new>>
+      </event>
+
+      <event>
+         <<destroy>>
+      </event>
+
+      <event>
+         initialized
+      </event>
+
+      <event>
+         connect N
+      </event>
+
+      <event>
+         connect NE
+      </event>
+
+      <event>
+         set next generation
+      </event>
+
+      <event>
+         advance
+      </event>
+
+      <event>
+         display
+      </event>
+
+      <event>
+         connect NW
+      </event>
+
+      <event>
+         connect W
+      </event>
+
+      <event>
+         set
+      </event>
+
+      <transition>
+         Doesn't exist
+         <<new>>
+         Exists
+         <transitionaction>
+            initializer
+      </transition>
+
+      <transition>
+         Ready
+         <<destroy>>
+         Doesn't exist
+      </transition>
+
+      <transition>
+         Exists
+         initialized
+         Ready
+         <transitionaction>
+            get ready
+      </transition>
+
+      <transition>
+         Exists
+         connect NW
+         Exists
+         <transitionaction>
+            connect northwest
+      </transition>
+
+      <transition>
+         Exists
+         connect N
+         Exists
+         <transitionaction>
+            connect north
+      </transition>
+
+      <transition>
+         Exists
+         connect NE
+         Exists
+         <transitionaction>
+            connect northeast
+      </transition>
+
+      <transition>
+         Exists
+         connect W
+         Exists
+         <transitionaction>
+            connect west
+      </transition>
+
+      <transition>
+         Ready
+         set
+         Ready
+         <transitionaction>
+            set a square
+      </transition>
+
+      <transition>
+         Ready
+         set next generation
+         Ready
+         <transitionaction>
+            compute next generation
+      </transition>
+
+      <transition>
+         Ready
+         advance
+         Ready
+         <transitionaction>
+            move to next generation
+      </transition>
+
+      <transition>
+         Ready
+         display
+         Ready
+         <transitionaction>
+            show square status
+      </transition>
+
+   </class>
+
+
+   <association>
+      above
+      <associationparticipation>
+         N
+         Square
+         0
+         1
+      <associationparticipation>
+         S
+         Square
+         0
+         1
+   </association>
+
+   <association>
+      up diagonal
+      <associationparticipation>
+         SW
+         Square
+         0
+         1
+      <associationparticipation>
+         NE
+         Square
+         0
+         1
+   </association>
+
+   <association>
+      beside
+      <associationparticipation>
+         E
+         Square
+         0
+         1
+      <associationparticipation>
+         W
+         Square
+         0
+         1
+   </association>
+
+   <association>
+      down diag
+      <associationparticipation>
+         SE
+         Square
+         0
+         1
+      <associationparticipation>
+         NW
+         Square
+         0
+         1
+   </association>
+
+   <association>
+      may be NW corner
+      <associationparticipation>
+         may be NW
+         Colony
+         0
+         1
+      <associationparticipation>
+         is NW corner
+         Square
+         1
+         1
+   </association>
+
+</jalmodel>
+

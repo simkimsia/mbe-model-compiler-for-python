@@ -1,0 +1,116 @@
+<jalmodel>
+   Hello World
+
+   <javasourcecodedirectory>
+      /Users/kim/eclipse-workspace/hello-world
+
+   <isverboseon>
+      true
+
+   <isassertionson>
+      false
+
+   <issafemodeon>
+      false
+
+   <includepackagename>
+      false
+
+   <range>
+      unconstrained
+      <span>
+         <rttype>
+            String
+   </range>
+
+   <range>
+      Hello World reference
+      <span>
+         <rttype>
+            HelloWorld
+   </range>
+
+   <range>
+      Hello World set
+      <span>
+         <rttype>
+            ArrayList<HelloWorld>
+   </range>
+
+   <class>
+      Hello World
+
+      <attribute>
+         state
+      </attribute>
+
+      <action>
+         say hello
+         <guarantees>
+            "Hello" has been said
+         </guarantees>
+         <pimaction>
+            .System.out.println( "Hello, world!" );
+         </pimaction>
+      </action>
+
+      <action>
+         say goodbye
+         <guarantees>
+            "Goodbye" has been said
+         </guarantees>
+         <pimaction>
+            .System.out.println( "Goodbye, cruel world" );
+         </pimaction>
+      </action>
+
+      <state>
+         Exists
+      </state>
+
+      <state>
+         Doesn't exist
+      </state>
+
+      <event>
+         <<new>>
+      </event>
+
+      <event>
+         <<destroy>>
+      </event>
+
+      <transition>
+         Doesn't exist
+         <<new>>
+         Exists
+         <transitionaction>
+            say hello
+      </transition>
+
+      <transition>
+         Exists
+         <<destroy>>
+         Doesn't exist
+         <transitionaction>
+            say goodbye
+      </transition>
+
+      <pimhelper>
+         .public static void main(String[] args) {
+         .   System.out.println();
+         .   System.out.println( "Hello World, in model-based form" );
+         .   System.out.println();
+         .   HelloWorld aHello = new HelloWorld();
+         .   System.out.println();
+         .   aHello.destroy();
+         .   System.out.println();
+         .   System.out.println( "Done..." );
+         .}
+      </pimhelper>
+
+   </class>
+
+
+</jalmodel>
+

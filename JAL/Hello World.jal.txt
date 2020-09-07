@@ -1,0 +1,121 @@
+<jalmodel>
+   Hello World
+
+   <javasourcecodedirectory>
+      /Users/kim/eclipse-workspace/mbe-python-model-compiler/generated/
+
+   <isverboseon>
+      true
+
+   <isassertionson>
+      false
+
+   <issafemodeon>
+      false
+
+   <includepackagename>
+      false
+
+   <range>
+      unconstrained
+      <span>
+         <rttype>
+            String
+   </range>
+
+   <range>
+      Hello World reference
+      <span>
+         <rttype>
+            HelloWorld
+   </range>
+
+   <range>
+      Hello World set
+      <span>
+         <rttype>
+            ArrayList<HelloWorld>
+   </range>
+
+   <class>
+      Hello World
+
+      <pimimport>
+         from enum import Enum
+         from typing import ClassVar, List
+      </pimimport>
+
+      <attribute>
+         state
+      </attribute>
+
+      <action>
+         say hello
+         <guarantees>
+            "Hello" has been said
+         </guarantees>
+         <pimaction>
+            .print( "Hello, world!" )
+         </pimaction>
+      </action>
+
+      <action>
+         say goodbye
+         <guarantees>
+            "Goodbye" has been said
+         </guarantees>
+         <pimaction>
+            .print( "Goodbye, cruel world" )
+         </pimaction>
+      </action>
+
+      <state>
+         Exists
+      </state>
+
+      <state>
+         Doesn't exist
+      </state>
+
+      <event>
+         <<new>>
+      </event>
+
+      <event>
+         <<destroy>>
+      </event>
+
+      <transition>
+         Doesn't exist
+         <<new>>
+         Exists
+         <transitionaction>
+            say hello
+      </transition>
+
+      <transition>
+         Exists
+         <<destroy>>
+         Doesn't exist
+         <transitionaction>
+            say goodbye
+      </transition>
+
+      <pimhelper>
+         .@staticmethod
+         .def main():
+         .    """
+         .    Just a way to print lines
+         .    """
+         .    print("Hello World, in model-based form")
+         .    a_hello = HelloWorld()
+         .    a_hello.destroy()
+         .    print("Done...")
+         .
+      </pimhelper>
+
+   </class>
+
+
+</jalmodel>
+
