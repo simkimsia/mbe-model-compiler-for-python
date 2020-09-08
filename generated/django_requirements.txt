@@ -1,0 +1,6 @@
+-r requirements.txt
+
+# Django
+# ------------------------------------------------------------------------------
+django==2.2.16  # https://www.djangoproject.com/
+django-model-utils==4.0.0  # https://github.com/jazzband/django-model-utils

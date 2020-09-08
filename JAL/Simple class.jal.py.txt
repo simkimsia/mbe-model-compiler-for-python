@@ -1,0 +1,146 @@
+<jalmodel>
+   Simple class
+
+   <javasourcecodedirectory>
+      /Users/kim/eclipse-workspace/mbe-python-model-compiler/generated/
+
+   <isverboseon>
+      true
+
+   <isassertionson>
+      false
+
+   <issafemodeon>
+      false
+
+   <includepackagename>
+      false
+
+   <languageframeworkoutput>
+      python37
+
+   <range>
+      unconstrained
+      <span>
+         <rttype>
+            String
+   </range>
+
+   <range>
+      x type
+      <span>
+         <rttype>
+            int
+         <assert>
+            $ > 0
+   </range>
+
+   <range>
+      Simple class reference
+      <span>
+         <rttype>
+            SimpleClass
+   </range>
+
+   <range>
+      Simple class set
+      <span>
+         <rttype>
+            ArrayList<SimpleClass>
+   </range>
+
+   <class>
+      Simple class
+
+      <pimimport>
+         from enum import Enum
+         from typing import ClassVar, List
+      </pimimport>
+
+      <attribute>
+         x
+            <range>
+               x type
+      </attribute>
+
+      <attribute>
+         state
+      </attribute>
+
+      <action>
+         initializer
+         <guarantees>
+            x has been set to zero
+         </guarantees>
+         <pimaction>
+            .@a x @ = 0
+         </pimaction>
+      </action>
+
+      <action>
+         update x
+         <parameter>
+            new x
+            x type
+         <guarantees>
+            x has been set to new x
+         </guarantees>
+         <pimaction>
+            .@a x @ = @i new x @
+         </pimaction>
+      </action>
+
+      <state>
+         Exists
+      </state>
+
+      <state>
+         Doesn't exist
+      </state>
+
+      <event>
+         <<new>>
+      </event>
+
+      <event>
+         <<destroy>>
+      </event>
+
+      <event>
+         update
+      </event>
+
+      <transition>
+         Doesn't exist
+         <<new>>
+         Exists
+         <transitionaction>
+            initializer
+      </transition>
+
+      <transition>
+         Exists
+         <<destroy>>
+         Doesn't exist
+      </transition>
+
+      <transition>
+         Exists
+         update
+         Exists
+         <transitionaction>
+            update x
+      </transition>
+
+      <pimhelper>
+         .# comment 1
+         .# helper comment 2
+         .	# helper comment 3
+         .# comment 4
+      </pimhelper>
+
+   </class>
+
+
+</jalmodel>
+

@@ -50,6 +50,7 @@ public class Model {
 	public static final String tagIsAssertionsOn = "<isassertionson>";
 	public static final String tagIsSafeModeOn = "<issafemodeon>";
 	public static final String tagIncludePackageName = "<includepackagename>";
+	public static final String tagLanguageFrameworkOutput = "<languageframeworkoutput>";
 
 	// Static (class) variables
 
@@ -92,6 +93,16 @@ public class Model {
 			if (line.contains(Model.tagIncludePackageName)) {
 				newModel.setIncludePackageName(JALInput.nextLine().equals("true"));
 			}
+			if (line.contains(Model.tagLanguageFrameworkOutput)) {
+				if (JALInput.nextLine().equals("python37")) {
+					CodeOutput newCodeOutput = new PythonOutput();
+					Context.setCodeOutput(newCodeOutput);
+				}
+				if (JALInput.nextLine().equals("django22")) {
+					CodeOutput newCodeOutput = new DjangoOutput();
+					Context.setCodeOutput(newCodeOutput);
+				}
+			}
 			if (line.contains(Range.tagRangeStart)) {
 				Range newRange = Range.parseRange();
 			}
@@ -101,6 +112,7 @@ public class Model {
 			if (line.contains(Association.tagAssociationStart)) {
 				Association newAssociation = Association.parseAssociation();
 			}
+
 			line = JALInput.nextLine();
 		}
 		Context.clearModel();
