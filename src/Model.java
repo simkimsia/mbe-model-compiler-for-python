@@ -95,11 +95,11 @@ public class Model {
 			}
 			if (line.contains(Model.tagLanguageFrameworkOutput)) {
 				if (JALInput.nextLine().equals("python37")) {
-					CodeOutput newCodeOutput = new PythonOutput();
+					CodeOutput newCodeOutput = new Python37Output();
 					Context.setCodeOutput(newCodeOutput);
 				}
 				if (JALInput.nextLine().equals("django22")) {
-					CodeOutput newCodeOutput = new DjangoOutput();
+					CodeOutput newCodeOutput = new Django22Output();
 					Context.setCodeOutput(newCodeOutput);
 				}
 			}
