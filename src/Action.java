@@ -360,24 +360,24 @@ public class Action {
 		// guarantees
 		// the code for an invocation (call to) this Action has been emitted
 		if (returnRange != null) {
-			PythonOutput.print(" aResult = ");
+			Context.codeOutput().print(" aResult = ");
 		}
 		// originally it was asInstanceLevelName but I replace with SnakeStyle
-		// PythonOutput.print("this." + NameService.asInstanceLevelName(name));
-		PythonOutput.print("self._" + NameService.asSnakeStyleName(name));
+		// Context.codeOutput().print("this." + NameService.asInstanceLevelName(name));
+		Context.codeOutput().print("self._" + NameService.asSnakeStyleName(name));
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		if (parameterIterator.hasNext()) {
-			PythonOutput.print("( ");
+			Context.codeOutput().print("( ");
 			while (parameterIterator.hasNext()) {
 				Parameter aParameter = parameterIterator.next();
 				aParameter.ruleActualParameter();
 				if (parameterIterator.hasNext()) {
-					PythonOutput.print(", ");
+					Context.codeOutput().print(", ");
 				}
 			}
-			PythonOutput.println(" )");
+			Context.codeOutput().println(" )");
 		} else {
-			PythonOutput.println("()");
+			Context.codeOutput().println("()");
 		}
 	}
 
@@ -403,15 +403,15 @@ public class Action {
 		// guarantees
 		// the code for the private method implementation of this Action has been
 		// emitted
-		PythonOutput.indent();
-		PythonOutput.print("def _");
-		PythonOutput.print(NameService.asSnakeStyleName(name));
+		Context.codeOutput().indent();
+		Context.codeOutput().print("def _");
+		Context.codeOutput().print(NameService.asSnakeStyleName(name));
 		this.ruleActionFormalParameters();
 		this.ruleEndReturnTypeForAction(returnRange);
-		PythonOutput.println(":");
+		Context.codeOutput().println(":");
 
 		this.ruleSpecifyContract();
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();
 		}
@@ -419,9 +419,9 @@ public class Action {
 		if (Context.model().isAssertionsOn()) {
 			this.ruleExitAssertions();
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
-		PythonOutput.println("");
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
+		Context.codeOutput().println("");
 	}
 
 	public void ruleEndReturnTypeForAction(Range returnRange) {
@@ -441,7 +441,7 @@ public class Action {
 		// the code for the private method implementation of this Action has been
 		// emitted
 		if (returnRange != null) {
-			PythonOutput.print(" -> " + returnRange.pIMRunTimeType());
+			Context.codeOutput().print(" -> " + returnRange.pIMRunTimeType());
 		}
 	}
 
@@ -463,18 +463,18 @@ public class Action {
 		// emitted
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		if (parameterIterator.hasNext()) {
-			PythonOutput.print("(self, ");
+			Context.codeOutput().print("(self, ");
 			while (parameterIterator.hasNext()) {
 				Parameter aParameter = parameterIterator.next();
 				aParameter.ruleFormalParameter();
 				if (parameterIterator.hasNext()) {
-					PythonOutput.print(", ");
+					Context.codeOutput().print(", ");
 				}
 			}
 
-			PythonOutput.print(")");
+			Context.codeOutput().print(")");
 		} else {
-			PythonOutput.print("(self)");
+			Context.codeOutput().print("(self)");
 		}
 	}
 
@@ -500,26 +500,26 @@ public class Action {
 		// guarantees
 		// the contract for the method has been emitted
 		if (Context.model().isVerbose()) {
-			PythonOutput.indent();
-			PythonOutput.indentMore();
-			PythonOutput.println("# requires");
+			Context.codeOutput().indent();
+			Context.codeOutput().indentMore();
+			Context.codeOutput().println("# requires");
 			if (!requiresSet.isEmpty()) {
 				for (Condition aRequiresClause : requiresSet) {
 					aRequiresClause.ruleContractCondition();
 				}
 			} else {
-				PythonOutput.indent();
-				PythonOutput.println("#   none");
+				Context.codeOutput().indent();
+				Context.codeOutput().println("#   none");
 			}
-			PythonOutput.indent();
-			PythonOutput.println("# guarantees");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# guarantees");
 			if (!guaranteesSet.isEmpty()) {
 				for (Condition aGuaranteesClause : guaranteesSet) {
 					aGuaranteesClause.ruleContractCondition();
 				}
 			} else {
-				PythonOutput.indent();
-				PythonOutput.println("#   none");
+				Context.codeOutput().indent();
+				Context.codeOutput().println("#   none");
 			}
 		}
 	}
@@ -564,8 +564,8 @@ public class Action {
 		// guarantees
 		// the PIM Overlay action body for the method has been emitted
 		for (String actionStmt : pIMOverlayActionSpec) {
-			PythonOutput.println(NameService.formatActionStmt(actionStmt));
-			PythonOutput.indent();
+			Context.codeOutput().println(NameService.formatActionStmt(actionStmt));
+			Context.codeOutput().indent();
 		}
 	}
 

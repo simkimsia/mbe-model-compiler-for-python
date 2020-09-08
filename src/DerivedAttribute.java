@@ -206,13 +206,13 @@ public class DerivedAttribute {
 		// guarantees
 		// the public compute-on-demand derived attribute getter code for this attribute
 		// has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("public " + NameService.formatActionStmt(derivedDataType.pIMRunTimeType()));
-		PythonOutput.print(" " + NameService.asInstanceLevelName(name));
+		Context.codeOutput().indent();
+		Context.codeOutput().print("public " + NameService.formatActionStmt(derivedDataType.pIMRunTimeType()));
+		Context.codeOutput().print(" " + NameService.asInstanceLevelName(name));
 		derivationAction.ruleActionFormalParameters();
 		derivationAction.ruleSpecifyContract();
-		PythonOutput.indentMore();
-		PythonOutput.indent();
+		Context.codeOutput().indentMore();
+		Context.codeOutput().indent();
 		if (Context.model().isAssertionsOn()) {
 			derivationAction.ruleEntryAssertions();
 		}
@@ -220,10 +220,10 @@ public class DerivedAttribute {
 		if (Context.model().isAssertionsOn()) {
 			derivationAction.ruleExitAssertions();
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 }

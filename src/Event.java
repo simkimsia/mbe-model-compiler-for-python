@@ -174,15 +174,15 @@ public class Event {
 		// guarantees
 		// the operation and method code for this Event have been emitted
 		Context.setEvent(this);
-		PythonOutput.indent();
-		PythonOutput.print("def __init__(self");
+		Context.codeOutput().indent();
+		Context.codeOutput().print("def __init__(self");
 		this.ruleOperationFormalParameters();
-		PythonOutput.println("):");
+		Context.codeOutput().println("):");
 		if (Context.model().isVerbose()) {
 			this.ruleOperationContractRequiresClause();
 			this.ruleOperationContractGuaranteesClause();
 		}
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();
 		}
@@ -193,13 +193,13 @@ public class Event {
 		}
 		// instead of using the class method to add to the set i simply add to the class
 		// attribute
-		// PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name())
+		// Context.codeOutput().println(NameService.asInstanceLevelName(Context.mMClass().name())
 		// + "Set.add( self )");
 		// this should be ClassName.ClassNameSet.append(self)
-		PythonOutput.println(NameService.asClassLevelName(Context.mMClass().name()) + "."
+		Context.codeOutput().println(NameService.asClassLevelName(Context.mMClass().name()) + "."
 				+ NameService.asClassLevelName(Context.mMClass().name()) + "Set.append( self )");
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
 		Context.clearEvent();
 	}
@@ -223,12 +223,12 @@ public class Event {
 			StateEventBehavior aBehavior = behaviorIterator.next();
 			aBehavior.ruleConstructorBehavior();
 			if (behaviorIterator.hasNext()) {
-				PythonOutput.print(" else ");
+				Context.codeOutput().print(" else ");
 			}
 		}
 		if (aBehaviorSet.size() > 1) {
-			PythonOutput.println("");
-			PythonOutput.indent();
+			Context.codeOutput().println("");
+			Context.codeOutput().indent();
 		}
 	}
 
@@ -265,61 +265,61 @@ public class Event {
 		// guarantees
 		// the operation and method code for this Event have been emitted
 		Context.setEvent(this);
-		PythonOutput.indent();
-		PythonOutput.print("def ");
+		Context.codeOutput().indent();
+		Context.codeOutput().print("def ");
 		// method name here
-		PythonOutput.print(NameService.asInstanceLevelName(name));
+		Context.codeOutput().print(NameService.asInstanceLevelName(name));
 		// has self, because instance method
-		PythonOutput.print("(self");
+		Context.codeOutput().print("(self");
 		// in case got params so need to add ,
 		if (Context.mMClass().eventParameterSet().size() > 0) {
-			PythonOutput.print(",");
+			Context.codeOutput().print(",");
 		}
 		// parameters
 		this.ruleOperationFormalParameters();
 		// has self, because instance method
-		PythonOutput.print(")");
+		Context.codeOutput().print(")");
 		// return
-		PythonOutput.print(" -> ");
+		Context.codeOutput().print(" -> ");
 		if (returnRange != null) {
-			PythonOutput.print(returnRange.pIMRunTimeType() + " ");
+			Context.codeOutput().print(returnRange.pIMRunTimeType() + " ");
 		} else {
-			PythonOutput.print("None");
+			Context.codeOutput().print("None");
 		}
 
-		PythonOutput.println(" :");
+		Context.codeOutput().println(" :");
 		if (Context.model().isVerbose()) {
 			this.ruleOperationContractRequiresClause();
 			this.ruleOperationContractGuaranteesClause();
 		}
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleEntryAssertions();
 		}
 		if (returnRange != null) {
-			PythonOutput.print(returnRange.pIMRunTimeType() + " aResult");
+			Context.codeOutput().print(returnRange.pIMRunTimeType() + " aResult");
 			if (returnRange.pIMInitialValue() != null) {
-				PythonOutput.print(" = " + returnRange.pIMInitialValue());
+				Context.codeOutput().print(" = " + returnRange.pIMInitialValue());
 			} else {
 				System.out.println();
 				System.out.println("****** ERROR in Event, no return data type initial value specified! ******");
 				System.out.println("Class = " + Context.mMClass().name() + ", event = " + name);
 				System.out.println();
-				PythonOutput.incrementErrorCount();
+				Context.codeOutput().incrementErrorCount();
 			}
-			PythonOutput.println(";");
+			Context.codeOutput().println(";");
 		}
 		this.ruleEventMethodBody();
 		if (Context.model().isAssertionsOn()) {
 			this.ruleExitAssertions();
 		}
 		if (returnRange != null) {
-			PythonOutput.println("return aResult;");
+			Context.codeOutput().println("return aResult;");
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 		Context.clearEvent();
 	}
 
@@ -346,12 +346,12 @@ public class Event {
 		Iterator<Parameter> parameterIterator = parameterSet.iterator();
 		while (parameterIterator.hasNext()) {
 			Parameter aParameter = parameterIterator.next();
-			PythonOutput.print(" ");
+			Context.codeOutput().print(" ");
 			aParameter.ruleFormalParameter();
 			if (parameterIterator.hasNext()) {
-				PythonOutput.print(",");
+				Context.codeOutput().print(",");
 			} else {
-				PythonOutput.print(" ");
+				Context.codeOutput().print(" ");
 			}
 		}
 	}
@@ -390,18 +390,18 @@ public class Event {
 		// Context.event == this
 		// guarantees
 		// operation contract requires clause has been emitted
-		PythonOutput.indent();
-		PythonOutput.indentMore();
-		PythonOutput.println("# requires");
+		Context.codeOutput().indent();
+		Context.codeOutput().indentMore();
+		Context.codeOutput().println("# requires");
 		ArrayList<Condition> requiresConditionSet = Context.mMClass().eventRequiresSet();
 		if (!requiresConditionSet.isEmpty()) {
 			for (Condition aCondition : requiresConditionSet) {
-				PythonOutput.indent();
-				PythonOutput.println("#    " + aCondition.expression());
+				Context.codeOutput().indent();
+				Context.codeOutput().println("#    " + aCondition.expression());
 			}
 		} else {
-			PythonOutput.indent();
-			PythonOutput.println("#    none");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("#    none");
 		}
 	}
 
@@ -430,16 +430,16 @@ public class Event {
 		// operation contract requires clause has been emitted
 		// Implementation notes
 		// none
-		PythonOutput.indent();
-		PythonOutput.println("# guarantees");
+		Context.codeOutput().indent();
+		Context.codeOutput().println("# guarantees");
 		Iterator<StateEventBehavior> behaviorIterator = Context.mMClass().eventBehaviorSet().iterator();
 		while (behaviorIterator.hasNext()) {
 			StateEventBehavior aBehavior = behaviorIterator.next();
 			aBehavior.ruleContractGuaranteesClause();
 			if (behaviorIterator.hasNext()) {
-				PythonOutput.print(", -- or --");
+				Context.codeOutput().print(", -- or --");
 			}
-			PythonOutput.println("");
+			Context.codeOutput().println("");
 		}
 	}
 
@@ -491,10 +491,10 @@ public class Event {
 			StateEventBehavior aBehavior = behaviorIterator.next();
 			aBehavior.rulePushEventBehavior();
 			if (behaviorIterator.hasNext()) {
-				PythonOutput.print(" else ");
+				Context.codeOutput().print(" else ");
 			}
 		}
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 	public void ruleExitAssertions() {

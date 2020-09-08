@@ -145,7 +145,7 @@ public class NameService {
 			System.out.println("****** ERROR in name! ******");
 			System.out.println("Class = " + Context.mMClass().name() + ", name = " + originalName);
 			System.out.println();
-			PythonOutput.incrementErrorCount();
+			Context.codeOutput().incrementErrorCount();
 		}
 		return formattedString;
 	}
@@ -275,7 +275,7 @@ public class NameService {
 							System.out
 									.println("Class = " + Context.mMClass().name() + ", statement: " + originalString);
 							System.out.println();
-							PythonOutput.incrementErrorCount();
+							Context.codeOutput().incrementErrorCount();
 							formattingFailed = true;
 					}
 					charIndex++;
@@ -286,7 +286,7 @@ public class NameService {
 			System.out.println("****** ERROR in action language statement! Unbalanced '@' in statement ******");
 			System.out.println("Class = " + Context.mMClass().name() + ", statement: " + originalString);
 			System.out.println();
-			PythonOutput.incrementErrorCount();
+			Context.codeOutput().incrementErrorCount();
 		}
 		return formattedString;
 	}

@@ -195,16 +195,16 @@ public class Attribute {
 		// guarantees
 		// the instance variable declaration code for this attribute has been emitted
 		if (is_private) {
-			PythonOutput.print("_" + NameService.asInstanceLevelName(name));
+			Context.codeOutput().print("_" + NameService.asInstanceLevelName(name));
 		} else {
-			PythonOutput.print(NameService.asInstanceLevelName(name));
+			Context.codeOutput().print(NameService.asInstanceLevelName(name));
 		}
-		PythonOutput.print(": " + definedRange.pIMRunTimeType());
+		Context.codeOutput().print(": " + definedRange.pIMRunTimeType());
 
 		if (definedRange.pIMInitialValue() != "") {
-			PythonOutput.print(" = " + definedRange.pIMInitialValue());
+			Context.codeOutput().print(" = " + definedRange.pIMInitialValue());
 		}
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 	public void ruleGetter() {
@@ -220,27 +220,27 @@ public class Attribute {
 		// this is not a derived attribute
 		// guarantees
 		// the public instance variable getter code for this attribute has been emitted
-		PythonOutput.indent();
-		PythonOutput.println("@property");
-		PythonOutput.print("def " + NameService.asInstanceLevelName(name) + "(self) -> ");
-		PythonOutput.println(definedRange.pIMRunTimeType() + ":");
+		Context.codeOutput().indent();
+		Context.codeOutput().println("@property");
+		Context.codeOutput().print("def " + NameService.asInstanceLevelName(name) + "(self) -> ");
+		Context.codeOutput().println(definedRange.pIMRunTimeType() + ":");
 		if (Context.model().isVerbose()) {
-			PythonOutput.indent();
-			PythonOutput.indentMore();
-			PythonOutput.println("# requires");
-			PythonOutput.indent();
-			PythonOutput.println("#   none");
-			PythonOutput.indent();
-			PythonOutput.println("# guarantees");
-			PythonOutput.indent();
-			PythonOutput.println("#   returns the " + name);
+			Context.codeOutput().indent();
+			Context.codeOutput().indentMore();
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("#   none");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# guarantees");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("#   returns the " + name);
 		}
-		PythonOutput.indent();
-		PythonOutput.println("return self._" + NameService.asInstanceLevelName(name) + "");
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indent();
+		Context.codeOutput().println("return self._" + NameService.asInstanceLevelName(name) + "");
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 	public void ruleInstVarInvariantsCheck() {
@@ -256,10 +256,10 @@ public class Attribute {
 		// variable name not null
 		// guarantees
 		// the instance variable declaration code for this attribute has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("assert ");
-		PythonOutput.print(definedRange.pIMAssertionExpression(NameService.asInstanceLevelName(name)));
-		PythonOutput.println(": \"the value for attribute '" + name + "' is out of range\";");
+		Context.codeOutput().indent();
+		Context.codeOutput().print("assert ");
+		Context.codeOutput().print(definedRange.pIMAssertionExpression(NameService.asInstanceLevelName(name)));
+		Context.codeOutput().println(": \"the value for attribute '" + name + "' is out of range\";");
 	}
 
 }

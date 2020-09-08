@@ -210,14 +210,14 @@ public class State {
 		// a call to (private) actions implementing aState's behavior have been emitted
 		Context.setState(this);
 		if (!stateActionSet.isEmpty()) {
-			PythonOutput.indent();
-			PythonOutput.println("if( state == " + this.nameAsQualifiedENUM() + " ) {");
-			PythonOutput.indentMore();
+			Context.codeOutput().indent();
+			Context.codeOutput().println("if( state == " + this.nameAsQualifiedENUM() + " ) {");
+			Context.codeOutput().indentMore();
 			for (Action anAction : stateActionSet) {
 				anAction.ruleCallAction();
 			}
-			PythonOutput.indentLess();
-			PythonOutput.indent();
+			Context.codeOutput().indentLess();
+			Context.codeOutput().indent();
 
 		}
 		Context.clearState();

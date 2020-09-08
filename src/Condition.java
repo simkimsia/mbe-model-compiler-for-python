@@ -185,8 +185,8 @@ public class Condition {
 		// none
 		// guarantees
 		// this contract condition for an Action has been emitted
-		PythonOutput.indent();
-		PythonOutput.println("#   " + expression);
+		Context.codeOutput().indent();
+		Context.codeOutput().println("#   " + expression);
 	}
 
 	public void ruleAssertCondition() {
@@ -205,12 +205,12 @@ public class Condition {
 		// guarantees
 		// the assertion for this Condition has been emitted
 		if (this.isAssertable()) {
-			PythonOutput.print("assert( " + NameService.formatActionStmt(pIMOverlayAssertExpression) + " )");
+			Context.codeOutput().print("assert( " + NameService.formatActionStmt(pIMOverlayAssertExpression) + " )");
 			if (this.hasAssertionMessage()) {
-				PythonOutput.print(": \"" + NameService.formatActionStmt(pIMOverlayAssertMessage) + "\"");
+				Context.codeOutput().print(": \"" + NameService.formatActionStmt(pIMOverlayAssertMessage) + "\"");
 			}
-			PythonOutput.println(";");
-			PythonOutput.indent();
+			Context.codeOutput().println(";");
+			Context.codeOutput().indent();
 		}
 	}
 

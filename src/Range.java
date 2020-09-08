@@ -398,8 +398,8 @@ public class Range {
 		// variable name not null
 		// guarantees
 		// the instance variable declaration code for this attribute has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("DUMMY DUMMY--not implemented yet");
+		Context.codeOutput().indent();
+		Context.codeOutput().print("DUMMY DUMMY--not implemented yet");
 	}
 
 }

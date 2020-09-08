@@ -214,21 +214,21 @@ public class AssociationParticipation {
 		// none
 		// guarantees
 		// the private inst var declaration has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("def _");
-		PythonOutput.print(NameService.asSnakeStyleName(participatingClass.name()));
+		Context.codeOutput().indent();
+		Context.codeOutput().print("def _");
+		Context.codeOutput().print(NameService.asSnakeStyleName(participatingClass.name()));
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.print("def ");
+			Context.codeOutput().print("def ");
 		} else {
-			PythonOutput.print("private ArrayList<");
+			Context.codeOutput().print("private ArrayList<");
 		}
 
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.print(" ");
+			Context.codeOutput().print(" ");
 		} else {
-			PythonOutput.print("> ");
+			Context.codeOutput().print("> ");
 		}
-		PythonOutput.println(NameService.asInstanceLevelName(roleName) + ";");
+		Context.codeOutput().println(NameService.asInstanceLevelName(roleName) + ";");
 	}
 
 	public void ruleInitializeParticipationInstVar() {
@@ -246,15 +246,15 @@ public class AssociationParticipation {
 		// none
 		// guarantees
 		// the private inst var declaration has been emitted
-		PythonOutput.print(NameService.asInstanceLevelName(roleName));
+		Context.codeOutput().print(NameService.asInstanceLevelName(roleName));
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.println(" = null;");
+			Context.codeOutput().println(" = null;");
 		} else {
-			PythonOutput.print(" = new ArrayList<");
-			PythonOutput.print(NameService.asClassLevelName(participatingClass.name()));
-			PythonOutput.println(">();");
+			Context.codeOutput().print(" = new ArrayList<");
+			Context.codeOutput().print(NameService.asClassLevelName(participatingClass.name()));
+			Context.codeOutput().println(">();");
 		}
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 	}
 
 	public void ruleParticipationInvariantsCheck() {
@@ -285,22 +285,23 @@ public class AssociationParticipation {
 		// guarantees
 		// the participation invariants check has been emitted
 		if (lowerBound > 0) {
-			PythonOutput.indent();
-			PythonOutput.print("assert " + NameService.asInstanceLevelName(roleName));
+			Context.codeOutput().indent();
+			Context.codeOutput().print("assert " + NameService.asInstanceLevelName(roleName));
 			if (upperBound == 1) {
-				PythonOutput.println(
+				Context.codeOutput().println(
 						" != null: \"the multiplicity for association role '" + roleName + "' is out of range (=0)\";");
 			} else {
-				PythonOutput
+				Context.codeOutput()
 						.print(".size() >= " + lowerBound + ": \"the multiplicity for association role '" + roleName);
-				PythonOutput.println("' is out of range (<" + lowerBound + ")\";");
+				Context.codeOutput().println("' is out of range (<" + lowerBound + ")\";");
 			}
 		}
 		if (upperBound > 1) {
-			PythonOutput.indent();
-			PythonOutput.print("assert " + NameService.asInstanceLevelName(roleName));
-			PythonOutput.print(".size() <= " + upperBound + ": \"the multiplicity for association role '" + roleName);
-			PythonOutput.println("' is out of range (>" + upperBound + ")\";");
+			Context.codeOutput().indent();
+			Context.codeOutput().print("assert " + NameService.asInstanceLevelName(roleName));
+			Context.codeOutput()
+					.print(".size() <= " + upperBound + ": \"the multiplicity for association role '" + roleName);
+			Context.codeOutput().println("' is out of range (>" + upperBound + ")\";");
 		}
 	}
 
@@ -335,29 +336,30 @@ public class AssociationParticipation {
 		}
 		if (upperBound == 1) {
 			if (lowerBound != 1) {
-				PythonOutput.indent();
-				PythonOutput.println("if( " + NameService.asInstanceLevelName(roleName) + " != null ) {");
-				PythonOutput.indentMore();
+				Context.codeOutput().indent();
+				Context.codeOutput().println("if( " + NameService.asInstanceLevelName(roleName) + " != null ) {");
+				Context.codeOutput().indentMore();
 			}
-			PythonOutput.indent();
-			PythonOutput.println(NameService.asInstanceLevelName(roleName) + "."
+			Context.codeOutput().indent();
+			Context.codeOutput().println(NameService.asInstanceLevelName(roleName) + "."
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
 			if (lowerBound != 1) {
-				PythonOutput.indentLess();
-				PythonOutput.indent();
+				Context.codeOutput().indentLess();
+				Context.codeOutput().indent();
 
 			}
 		} else {
-			PythonOutput.indent();
-			PythonOutput.println("for( " + NameService.asClassLevelName(theClass.name()) + " a"
-					+ NameService.asClassLevelName(theClass.name()) + ": " + NameService.asInstanceLevelName(roleName)
-					+ " ) {");
-			PythonOutput.indentMore();
-			PythonOutput.indent();
-			PythonOutput.println("a" + NameService.asClassLevelName(theClass.name()) + "."
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("for( " + NameService.asClassLevelName(theClass.name()) + " a"
+							+ NameService.asClassLevelName(theClass.name()) + ": "
+							+ NameService.asInstanceLevelName(roleName) + " ) {");
+			Context.codeOutput().indentMore();
+			Context.codeOutput().indent();
+			Context.codeOutput().println("a" + NameService.asClassLevelName(theClass.name()) + "."
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
-			PythonOutput.indentLess();
-			PythonOutput.indent();
+			Context.codeOutput().indentLess();
+			Context.codeOutput().indent();
 
 		}
 	}
@@ -387,29 +389,30 @@ public class AssociationParticipation {
 		String otherRoleName = Context.associationParticipation().roleName();
 		if (upperBound == 1) {
 			if (lowerBound != 1) {
-				PythonOutput.indent();
-				PythonOutput.println("if( " + NameService.asInstanceLevelName(roleName) + " != null ) {");
-				PythonOutput.indentMore();
+				Context.codeOutput().indent();
+				Context.codeOutput().println("if( " + NameService.asInstanceLevelName(roleName) + " != null ) {");
+				Context.codeOutput().indentMore();
 			}
-			PythonOutput.indent();
-			PythonOutput.println(NameService.asInstanceLevelName(roleName) + "."
+			Context.codeOutput().indent();
+			Context.codeOutput().println(NameService.asInstanceLevelName(roleName) + "."
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
 			if (lowerBound != 1) {
-				PythonOutput.indentLess();
-				PythonOutput.indent();
+				Context.codeOutput().indentLess();
+				Context.codeOutput().indent();
 
 			}
 		} else {
-			PythonOutput.indent();
-			PythonOutput.println("for( " + NameService.asClassLevelName(theClass.name()) + " a"
-					+ NameService.asClassLevelName(theClass.name()) + ": " + NameService.asInstanceLevelName(roleName)
-					+ " ) {");
-			PythonOutput.indentMore();
-			PythonOutput.indent();
-			PythonOutput.println("a" + NameService.asClassLevelName(theClass.name()) + "."
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("for( " + NameService.asClassLevelName(theClass.name()) + " a"
+							+ NameService.asClassLevelName(theClass.name()) + ": "
+							+ NameService.asInstanceLevelName(roleName) + " ) {");
+			Context.codeOutput().indentMore();
+			Context.codeOutput().indent();
+			Context.codeOutput().println("a" + NameService.asClassLevelName(theClass.name()) + "."
 					+ NameService.asInstanceLevelName(otherRoleName) + "ReferenceCheck( this );");
-			PythonOutput.indentLess();
-			PythonOutput.indent();
+			Context.codeOutput().indentLess();
+			Context.codeOutput().indent();
 
 		}
 	}
@@ -440,34 +443,36 @@ public class AssociationParticipation {
 		// none
 		// guarantees
 		// the participation reference check has been emitted
-		PythonOutput.indent();
-		PythonOutput.print("public void " + NameService.asInstanceLevelName(roleName) + "ReferenceCheck( "
+		Context.codeOutput().indent();
+		Context.codeOutput().print("public void " + NameService.asInstanceLevelName(roleName) + "ReferenceCheck( "
 				+ NameService.asClassLevelName(participatingClass().name()));
-		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass().name()) + " ) {");
+		Context.codeOutput().println(" a" + NameService.asClassLevelName(participatingClass().name()) + " ) {");
 		if (Context.model().isVerbose()) {
-			PythonOutput.indent();
-			PythonOutput.println("# requires");
-			PythonOutput.indent();
-			PythonOutput.println("#   a" + NameService.asClassLevelName(participatingClass().name()) + " != null");
-			PythonOutput.indent();
-			PythonOutput.println("# guarantees");
-			PythonOutput.indent();
-			PythonOutput.println(
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("#   a" + NameService.asClassLevelName(participatingClass().name()) + " != null");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# guarantees");
+			Context.codeOutput().indent();
+			Context.codeOutput().println(
 					"#   assertion failure when this object does not have a reference back to the calling object");
 		}
-		PythonOutput.indentMore();
-		PythonOutput.indent();
-		PythonOutput.print("assert " + NameService.asInstanceLevelName(roleName));
+		Context.codeOutput().indentMore();
+		Context.codeOutput().indent();
+		Context.codeOutput().print("assert " + NameService.asInstanceLevelName(roleName));
 		if (upperBound == 1) {
-			PythonOutput.print(" == a" + NameService.asClassLevelName(participatingClass().name()));
+			Context.codeOutput().print(" == a" + NameService.asClassLevelName(participatingClass().name()));
 		} else {
-			PythonOutput.print(".indexOf( a" + NameService.asClassLevelName(participatingClass().name()) + " ) != -1 ");
+			Context.codeOutput()
+					.print(".indexOf( a" + NameService.asClassLevelName(participatingClass().name()) + " ) != -1 ");
 		}
-		PythonOutput.println(": \"this object does not have a reference back to the calling object\";");
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().println(": \"this object does not have a reference back to the calling object\";");
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 	public void rulePublicLinkService() {
@@ -499,40 +504,42 @@ public class AssociationParticipation {
 		// being worked with)
 		// guarantees
 		// the public link service been emitted
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 		String otherRoleName = Context.associationParticipation().roleName();
-		PythonOutput.print("public void link" + NameService.asClassLevelName(otherRoleName));
-		PythonOutput.print("( " + NameService.asClassLevelName(participatingClass.name()));
-		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
+		Context.codeOutput().print("public void link" + NameService.asClassLevelName(otherRoleName));
+		Context.codeOutput().print("( " + NameService.asClassLevelName(participatingClass.name()));
+		Context.codeOutput().println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
 		if (Context.model().isVerbose()) {
-			PythonOutput.indent();
-			PythonOutput.println("# requires");
-			PythonOutput.indent();
-			PythonOutput.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
-			PythonOutput.indent();
-			PythonOutput.println("# guarantees");
-			PythonOutput.indent();
-			PythonOutput.println("//   both this and a" + NameService.asClassLevelName(participatingClass.name())
-					+ " are linked to each other");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# guarantees");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("//   both this and a"
+					+ NameService.asClassLevelName(participatingClass.name()) + " are linked to each other");
 		}
-		PythonOutput.indentMore();
+		Context.codeOutput().indentMore();
 		if (Context.model().isAssertionsOn()) {
-			PythonOutput.indent();
-			PythonOutput.println("assert( a" + NameService.asClassLevelName(participatingClass.name()) + " != null );");
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("assert( a" + NameService.asClassLevelName(participatingClass.name()) + " != null );");
 		}
-		PythonOutput.indent();
-		PythonOutput.print(NameService.asInstanceLevelName(roleName));
+		Context.codeOutput().indent();
+		Context.codeOutput().print(NameService.asInstanceLevelName(roleName));
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.println(" = a" + NameService.asClassLevelName(participatingClass.name()) + ";");
+			Context.codeOutput().println(" = a" + NameService.asClassLevelName(participatingClass.name()) + ";");
 		} else {
-			PythonOutput.print(".add( a");
-			PythonOutput.print(NameService.asClassLevelName(participatingClass.name()));
-			PythonOutput.println(" );");
+			Context.codeOutput().print(".add( a");
+			Context.codeOutput().print(NameService.asClassLevelName(participatingClass.name()));
+			Context.codeOutput().println(" );");
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 	public void rulePublicUnlinkService() {
@@ -567,47 +574,50 @@ public class AssociationParticipation {
 		// being worked with)
 		// guarantees
 		// the public unlink service been emitted
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 		String otherRoleName = Context.associationParticipation().roleName();
-		PythonOutput.print("public void unlink" + NameService.asClassLevelName(otherRoleName));
-		PythonOutput.print("( " + NameService.asClassLevelName(participatingClass.name()));
-		PythonOutput.println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
+		Context.codeOutput().print("public void unlink" + NameService.asClassLevelName(otherRoleName));
+		Context.codeOutput().print("( " + NameService.asClassLevelName(participatingClass.name()));
+		Context.codeOutput().println(" a" + NameService.asClassLevelName(participatingClass.name()) + " ) {");
 		if (Context.model().isVerbose()) {
-			PythonOutput.indent();
-			PythonOutput.println("# requires");
-			PythonOutput.indent();
-			PythonOutput.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
-			PythonOutput.indent();
-			PythonOutput.println("# guarantees");
-			PythonOutput.indent();
-			PythonOutput.println(
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("//   a" + NameService.asClassLevelName(participatingClass.name()) + " <> null");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# guarantees");
+			Context.codeOutput().indent();
+			Context.codeOutput().println(
 					"//   this and a" + NameService.asClassLevelName(participatingClass.name()) + " are unlinked");
 		}
-		PythonOutput.indentMore();
+		Context.codeOutput().indentMore();
 		if (Context.model().isAssertionsOn()) {
-			PythonOutput.indent();
-			PythonOutput.println("assert( a" + NameService.asClassLevelName(participatingClass.name()) + " != null );");
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("assert( a" + NameService.asClassLevelName(participatingClass.name()) + " != null );");
 		}
 		if (!this.isUpperBoundMany()) {
-			PythonOutput.indent();
-			PythonOutput.println(NameService.asInstanceLevelName(roleName) + " = null;");
+			Context.codeOutput().indent();
+			Context.codeOutput().println(NameService.asInstanceLevelName(roleName) + " = null;");
 		} else {
-			PythonOutput.indent();
-			PythonOutput.print("int index = " + NameService.asInstanceLevelName(roleName));
-			PythonOutput.println(".indexOf( a" + NameService.asClassLevelName(participatingClass.name()) + " );");
-			PythonOutput.indent();
-			PythonOutput.println("if( index != -1 ) {");
-			PythonOutput.indentMore();
-			PythonOutput.indent();
-			PythonOutput.println(NameService.asInstanceLevelName(roleName) + ".remove( index );");
-			PythonOutput.indentLess();
-			PythonOutput.indent();
+			Context.codeOutput().indent();
+			Context.codeOutput().print("int index = " + NameService.asInstanceLevelName(roleName));
+			Context.codeOutput()
+					.println(".indexOf( a" + NameService.asClassLevelName(participatingClass.name()) + " );");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("if( index != -1 ) {");
+			Context.codeOutput().indentMore();
+			Context.codeOutput().indent();
+			Context.codeOutput().println(NameService.asInstanceLevelName(roleName) + ".remove( index );");
+			Context.codeOutput().indentLess();
+			Context.codeOutput().indent();
 
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
+		Context.codeOutput().println("");
 	}
 
 }

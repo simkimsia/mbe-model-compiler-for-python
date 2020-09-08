@@ -564,16 +564,16 @@ public class Association {
 		// guarantees
 		// the link & unlink services have been emitted
 		Context.setAssociation(this);
-		PythonOutput.indent();
-		PythonOutput.println("// link and unlink services for: " + name);
-		PythonOutput.println("");
-		PythonOutput.indentMore();
+		Context.codeOutput().indent();
+		Context.codeOutput().println("// link and unlink services for: " + name);
+		Context.codeOutput().println("");
+		Context.codeOutput().indentMore();
 		if (this.isBinaryAndReflexive()) {
 			this.ruleBinaryReflexiveAssociationLinkUnlinkServices();
 		} else {
 			this.ruleBinaryNonReflexiveAssociationLinkUnlinkServices();
 		}
-		PythonOutput.indentLess();
+		Context.codeOutput().indentLess();
 		Context.clearAssociation();
 	}
 

@@ -124,7 +124,7 @@ public class Context {
 
 	public static CodeOutput codeOutput() {
 		// description
-		// returns the CodeOutput context
+		// returns the CodeOutputService
 		// requires
 		// none
 		// guarantees

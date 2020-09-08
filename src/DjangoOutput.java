@@ -45,7 +45,7 @@ public class DjangoOutput extends CodeOutput {
 
     // Static (class) methods
 
-    public static boolean openJALOutputFile(String outputJALFileName) {
+    public boolean openJALOutputFile(String outputJALFileName) {
         // description
         // tries to open an output file for write
         // requires
@@ -65,7 +65,7 @@ public class DjangoOutput extends CodeOutput {
         return success;
     }
 
-    public static void print(String line) {
+    public void print(String line) {
         // description
         // outputs line (without <cr><lf>) to the output stream
         // requires
@@ -73,13 +73,13 @@ public class DjangoOutput extends CodeOutput {
         // guarantees
         // line has been written as-is (no <cr><lf>) to the output stream
         if (!outputAnythingOnLine) {
-            PythonOutput.outputActualIndentation();
+            this.outputActualIndentation();
         }
         outputJALPrintStream.print(line);
         outputAnythingOnLine = true;
     }
 
-    public static void println(String line) {
+    public void println(String line) {
         // description
         // outputs line (with <cr><lf>) to the output stream
         // requires
@@ -87,13 +87,13 @@ public class DjangoOutput extends CodeOutput {
         // guarantees
         // line has been written with <cr><lf> to the output stream
         if (!outputAnythingOnLine) {
-            PythonOutput.outputActualIndentation();
+            this.outputActualIndentation();
         }
         outputJALPrintStream.println(line);
         outputAnythingOnLine = false;
     }
 
-    public static void indentNone() {
+    public void indentNone() {
         // description
         // resets to indentation level zero (none)
         // requires
@@ -103,7 +103,7 @@ public class DjangoOutput extends CodeOutput {
         indentLevel = 0;
     }
 
-    public static void indentMore() {
+    public void indentMore() {
         // description
         // sets indentation level to one step deeper
         // requires
@@ -113,7 +113,7 @@ public class DjangoOutput extends CodeOutput {
         indentLevel += indentStep;
     }
 
-    public static void indentLess() {
+    public void indentLess() {
         // description
         // sets indentation level to one step shallower
         // requires
@@ -123,7 +123,7 @@ public class DjangoOutput extends CodeOutput {
         indentLevel -= indentStep;
     }
 
-    public static void indent() {
+    public void indent() {
         // description
         // indents to the proper level in the output
         // note: flags the indentation level with "|" when flag = true
@@ -146,7 +146,7 @@ public class DjangoOutput extends CodeOutput {
 
     }
 
-    public static void outputActualIndentation() {
+    public void outputActualIndentation() {
         // description
         // indents to the proper level in the output
         // note: flags the indentation level with "|" when flag = true
@@ -162,7 +162,7 @@ public class DjangoOutput extends CodeOutput {
         }
     }
 
-    public static boolean closeJALOutputFile() {
+    public boolean closeJALOutputFile() {
         // description
         // tries to close an output file after writing
         // requires
@@ -174,7 +174,7 @@ public class DjangoOutput extends CodeOutput {
         return true;
     }
 
-    public static void clearErrorCount() {
+    public void clearErrorCount() {
         // description
         // clears the error count before compilation
         // requires
@@ -184,7 +184,7 @@ public class DjangoOutput extends CodeOutput {
         errorCount = 0;
     }
 
-    public static void incrementErrorCount() {
+    public void incrementErrorCount() {
         // description
         // adds one to the compilation error count
         // requires
@@ -194,7 +194,7 @@ public class DjangoOutput extends CodeOutput {
         errorCount++;
     }
 
-    public static int errorCount() {
+    public int errorCount() {
         // description
         // returns the error count after compilation
         // requires

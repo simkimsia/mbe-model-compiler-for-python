@@ -327,7 +327,7 @@ public class Model {
 		System.out.println("*** Compiling model: '" + name + "' ***");
 		System.out.println();
 		Context.setModel(this);
-		PythonOutput.clearErrorCount();
+		Context.codeOutput().clearErrorCount();
 		for (MMClass aClass : MMClass.allMMClasses()) {
 			aClass.rulePythonClassFile();
 		}
@@ -335,7 +335,8 @@ public class Model {
 			this.ruleSafeModeClass();
 		}
 		Context.clearModel();
-		System.out.println("*** DONE compiling model ***    Number of compiler errors = " + PythonOutput.errorCount());
+		System.out.println(
+				"*** DONE compiling model ***    Number of compiler errors = " + Context.codeOutput().errorCount());
 	}
 
 	public void ruleSafeModeClass() {
@@ -371,68 +372,70 @@ public class Model {
 		// Java code for the top-level safe mode functionality has been emitted
 		String outputJALFileName = Context.model().javaSourceCodePath() + "SafeMode.java";
 		System.out.println("--compiling: " + outputJALFileName);
-		PythonOutput.openJALOutputFile(outputJALFileName);
-		PythonOutput.indentNone();
+		Context.codeOutput().openJALOutputFile(outputJALFileName);
+		Context.codeOutput().indentNone();
 		if (Context.model().includePackageName()) {
-			PythonOutput.indent();
-			PythonOutput.println("package " + NameService.asClassLevelName(Context.model().name()) + ";");
-			PythonOutput.println("");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("package " + NameService.asClassLevelName(Context.model().name()) + ";");
+			Context.codeOutput().println("");
 		}
 		if (Context.model().includeFutureAnnotations()) {
-			PythonOutput.println("from __future__ import annotations");
-			PythonOutput.println("");
+			Context.codeOutput().println("from __future__ import annotations");
+			Context.codeOutput().println("");
 		}
-		PythonOutput.indent();
-		PythonOutput.println("public class SafeMode {");
-		PythonOutput.println("");
-		PythonOutput.indentMore();
+		Context.codeOutput().indent();
+		Context.codeOutput().println("public class SafeMode {");
+		Context.codeOutput().println("");
+		Context.codeOutput().indentMore();
 		DateFormat aDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String todayString = aDateFormat.format(new Date());
-		PythonOutput.indent();
-		PythonOutput.println("// generated " + todayString + " by JAL open model compiler " + ModelCompiler.versionId);
-		PythonOutput.println("");
-		PythonOutput.println("");
+		Context.codeOutput().indent();
+		Context.codeOutput()
+				.println("// generated " + todayString + " by JAL open model compiler " + ModelCompiler.versionId);
+		Context.codeOutput().println("");
+		Context.codeOutput().println("");
 		if (isVerboseOn) {
-			PythonOutput.indent();
-			PythonOutput.println("// Implements top level SafeMode behavior for " + Context.model().name());
-			PythonOutput.println("");
-			PythonOutput.println("");
+			Context.codeOutput().indent();
+			Context.codeOutput().println("// Implements top level SafeMode behavior for " + Context.model().name());
+			Context.codeOutput().println("");
+			Context.codeOutput().println("");
 		}
-		PythonOutput.indent();
-		PythonOutput.println("public static void safeModeCheck() {");
+		Context.codeOutput().indent();
+		Context.codeOutput().println("public static void safeModeCheck() {");
 		if (isVerboseOn) {
-			PythonOutput.indent();
-			PythonOutput.println("# requires");
-			PythonOutput.println("#    none");
-			PythonOutput.println("# requires");
-			PythonOutput.println("#    all 'safe mode' class invariant checks have been run-time checked in "
+			Context.codeOutput().indent();
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().println("#    none");
+			Context.codeOutput().println("# requires");
+			Context.codeOutput().println("#    all 'safe mode' class invariant checks have been run-time checked in "
 					+ Context.model().name());
 		}
-		PythonOutput.indentMore();
+		Context.codeOutput().indentMore();
 		for (MMClass aClass : MMClass.allMMClasses()) {
-			PythonOutput.indent();
-			PythonOutput.print("for( " + NameService.asClassLevelName(aClass.name()) + " a"
+			Context.codeOutput().indent();
+			Context.codeOutput().print("for( " + NameService.asClassLevelName(aClass.name()) + " a"
 					+ NameService.asClassLevelName(aClass.name()) + ": ");
-			PythonOutput.println(NameService.asClassLevelName(aClass.name()) + ".all"
+			Context.codeOutput().println(NameService.asClassLevelName(aClass.name()) + ".all"
 					+ NameService.asClassLevelName(aClass.name()) + "s() ) {");
-			PythonOutput.indentMore();
-			PythonOutput.indent();
-			PythonOutput.println("a" + NameService.asClassLevelName(aClass.name()) + ".classInvariantsCheck();");
-			PythonOutput.indentLess();
-			PythonOutput.indent();
+			Context.codeOutput().indentMore();
+			Context.codeOutput().indent();
+			Context.codeOutput()
+					.println("a" + NameService.asClassLevelName(aClass.name()) + ".classInvariantsCheck();");
+			Context.codeOutput().indentLess();
+			Context.codeOutput().indent();
 
 		}
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
-		PythonOutput.println("");
-		PythonOutput.indentLess();
-		PythonOutput.indent();
+		Context.codeOutput().println("");
+		Context.codeOutput().println("");
+		Context.codeOutput().indentLess();
+		Context.codeOutput().indent();
 
-		PythonOutput.println("");
-		PythonOutput.println("");
-		PythonOutput.closeJALOutputFile();
+		Context.codeOutput().println("");
+		Context.codeOutput().println("");
+		Context.codeOutput().closeJALOutputFile();
 		System.out.println("--done compiling: " + outputJALFileName);
 		System.out.println();
 	}

@@ -109,7 +109,7 @@ public class Parameter {
 		// guarantees
 		// the run-time type (from the PIM Overlay) and the parameter name have been
 		// emitted
-		PythonOutput.print(
+		Context.codeOutput().print(
 				NameService.asSnakeStyleName(name) + ":" + NameService.formatActionStmt(definedRange.pIMRunTimeType()));
 	}
 
@@ -124,9 +124,9 @@ public class Parameter {
 		// none
 		// guarantees
 		// the parameter assertion has been emitted
-		PythonOutput.println(
+		Context.codeOutput().println(
 				"assert( " + definedRange.pIMAssertionExpression(NameService.asInstanceLevelName(name)) + " );");
-		PythonOutput.indent();
+		Context.codeOutput().indent();
 	}
 
 	public void ruleActualParameter() {
@@ -141,7 +141,7 @@ public class Parameter {
 		// none
 		// guarantees
 		// the parameter name, as an actual parameter, has been emitted
-		PythonOutput.print(NameService.asSnakeStyleName(name));
+		Context.codeOutput().print(NameService.asSnakeStyleName(name));
 	}
 
 }

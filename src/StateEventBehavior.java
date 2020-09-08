@@ -530,24 +530,24 @@ public class StateEventBehavior {
 		// Guards are included in the if-then logic when necessary
 		if (!this.isIgnore()) {
 			if (this.guard() != "true") {
-				PythonOutput.println("if( " + NameService.formatActionStmt(this.pIMGuard()) + " ) {");
-				PythonOutput.indentMore();
-				PythonOutput.indent();
+				Context.codeOutput().println("if( " + NameService.formatActionStmt(this.pIMGuard()) + " ) {");
+				Context.codeOutput().indentMore();
+				Context.codeOutput().indent();
 			}
 			if (this.isTransition()) {
 				this.ruleTransitionActionsList();
-				PythonOutput.println("self._state = " + toState.nameAsQualifiedENUM());
+				Context.codeOutput().println("self._state = " + toState.nameAsQualifiedENUM());
 			} else {
 				if (this.isImpossible()) {
-					PythonOutput.println(
+					Context.codeOutput().println(
 							"throw new IllegalStateException( \"Event is declared impossible in this state\" );");
 				}
 			}
 			if (this.guard() != "true") {
-				PythonOutput.indentLess();
-				PythonOutput.indent();
+				Context.codeOutput().indentLess();
+				Context.codeOutput().indent();
 			} else {
-				PythonOutput.indent();
+				Context.codeOutput().indent();
 			}
 		}
 	}
@@ -589,38 +589,38 @@ public class StateEventBehavior {
 		// subtype Transition generates calls to the (private) transition actions
 		// Guards are included in the if-then logic when necessary
 		if (!this.isIgnore()) {
-			PythonOutput.print("if self._state == " + fromState.nameAsQualifiedENUM());
+			Context.codeOutput().print("if self._state == " + fromState.nameAsQualifiedENUM());
 			this.ruleOptionalGuard();
-			PythonOutput.println(":");
+			Context.codeOutput().println(":");
 			if (this.isTransition()) {
-				PythonOutput.indentMore();
-				PythonOutput.indent();
+				Context.codeOutput().indentMore();
+				Context.codeOutput().indent();
 				this.ruleTransitionActionsList();
 				if (this.fromState() != this.toState()) {
-					PythonOutput.println("self._state = " + toState.nameAsQualifiedENUM());
+					Context.codeOutput().println("self._state = " + toState.nameAsQualifiedENUM());
 					if (this.toState() == Context.mMClass().stateNamed(State.defaultNotExistsStateName)) {
-						PythonOutput.indent();
+						Context.codeOutput().indent();
 						// instead of using the class method to add to the set i simply add to the class
 						// attribute
-						// PythonOutput.println(NameService.asInstanceLevelName(Context.mMClass().name())
+						// Context.codeOutput().println(NameService.asInstanceLevelName(Context.mMClass().name())
 						// + "Set.remove( self )");
 						// this should be ClassName.ClassNameSet.remove(self)
-						PythonOutput.println(NameService.asClassLevelName(Context.mMClass().name()) + "."
+						Context.codeOutput().println(NameService.asClassLevelName(Context.mMClass().name()) + "."
 								+ NameService.asClassLevelName(Context.mMClass().name()) + "Set.remove( self )");
 
 					}
 				}
-				PythonOutput.indentLess();
-				PythonOutput.indent();
+				Context.codeOutput().indentLess();
+				Context.codeOutput().indent();
 			} else {
 				if (this.isImpossible()) {
-					PythonOutput.indentMore();
-					PythonOutput.indent();
-					PythonOutput.println(
+					Context.codeOutput().indentMore();
+					Context.codeOutput().indent();
+					Context.codeOutput().println(
 							"throw new IllegalStateException( \"Event is declared impossible in this state\" );");
-					PythonOutput.indentLess();
-					PythonOutput.indent();
-					PythonOutput.print("}");
+					Context.codeOutput().indentLess();
+					Context.codeOutput().indent();
+					Context.codeOutput().print("}");
 				}
 			}
 		}
@@ -665,40 +665,40 @@ public class StateEventBehavior {
 		// then transition guarantees clause was emitted
 		// otherwise fatal exception clause was emitted
 		if (!this.isIgnore()) {
-			PythonOutput.indent();
-			PythonOutput.print("#   ");
+			Context.codeOutput().indent();
+			Context.codeOutput().print("#   ");
 			if (!fromState.name().equals(State.defaultNotExistsStateName)) {
-				PythonOutput.print("state was " + fromState.name());
+				Context.codeOutput().print("state was " + fromState.name());
 				if (!this.guard().equals("true")) {
-					PythonOutput.print(" and ");
+					Context.codeOutput().print(" and ");
 				}
 			}
 			if (!this.guard().equals("true")) {
-				PythonOutput.print(this.guard());
+				Context.codeOutput().print(this.guard());
 			}
-			PythonOutput.print(" --> ");
+			Context.codeOutput().print(" --> ");
 			if (this.isTransition()) {
 				boolean outputAnyCondition = false;
 				ArrayList<Condition> guaranteesConditionSet = this.transitionActionsGuaranteesSet();
 				Iterator<Condition> conditionIterator = guaranteesConditionSet.iterator();
 				while (conditionIterator.hasNext()) {
 					Condition aCondition = conditionIterator.next();
-					PythonOutput.print(aCondition.expression());
+					Context.codeOutput().print(aCondition.expression());
 					outputAnyCondition = true;
 					if (conditionIterator.hasNext()) {
-						PythonOutput.print(", ");
+						Context.codeOutput().print(", ");
 					} else {
-						PythonOutput.print(" ");
+						Context.codeOutput().print(" ");
 					}
 				}
 				if (fromState != toState) {
 					if (outputAnyCondition) {
-						PythonOutput.print("and ");
+						Context.codeOutput().print("and ");
 					}
-					PythonOutput.print("state == " + toState.name());
+					Context.codeOutput().print("state == " + toState.name());
 				}
 			} else {
-				PythonOutput.print("fatal exception thrown ");
+				Context.codeOutput().print("fatal exception thrown ");
 			}
 		}
 	}
@@ -718,7 +718,7 @@ public class StateEventBehavior {
 		// then it's been emitted
 		// otherwise nothing emitted
 		if (this.guard() != "true") {
-			PythonOutput.print(" && " + NameService.formatActionStmt(this.pIMGuard()));
+			Context.codeOutput().print(" && " + NameService.formatActionStmt(this.pIMGuard()));
 		}
 	}
 
@@ -737,7 +737,7 @@ public class StateEventBehavior {
 		// the set of calls to (private) Actions on this Transition have been emitted
 		for (Action anAction : transitionActionSet) {
 			anAction.ruleCallAction();
-			PythonOutput.indent();
+			Context.codeOutput().indent();
 		}
 	}
 
