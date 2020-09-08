@@ -2,7 +2,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class DjangoOutput extends CodeOutput {
+public class Django22Output extends CodeOutput {
     // General description
     // Model compiler
     // This is a helper class to manage indentation in generated code
