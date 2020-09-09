@@ -59,6 +59,7 @@ public class Context {
 	private static Association associationContext;
 	private static AssociationParticipation associationParticipationContext;
 	private static CodeOutput codeOutputContext;
+	private static ProductionRules productionRulesContext;
 
 	// Static (class) methods
 
@@ -260,6 +261,16 @@ public class Context {
 		// guarantees
 		// codeOutputContext == aCodeOutput
 		codeOutputContext = aCodeOutput;
+	}
+
+	public static void setProductionRules(ProductionRules aProductionRules) {
+		// description
+		// sets the ProductionRules context
+		// requires
+		// aProductionRules <> null
+		// guarantees
+		// productionRulesContext == aProductionRules
+		productionRulesContext = aProductionRules;
 	}
 
 	// Instance variables

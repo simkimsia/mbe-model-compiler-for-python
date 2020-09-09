@@ -94,13 +94,18 @@ public class Model {
 				newModel.setIncludePackageName(JALInput.nextLine().equals("true"));
 			}
 			if (line.contains(Model.tagLanguageFrameworkOutput)) {
-				if (JALInput.nextLine().equals("python37")) {
+				String readInput = JALInput.nextLine();
+				if (readInput.equals("python37")) {
 					CodeOutput newCodeOutput = new Python37Output();
 					Context.setCodeOutput(newCodeOutput);
+					ProductionRules newProductionRules = new Python37ProductionRules();
+					Context.setProductionRules(newProductionRules);
 				}
-				if (JALInput.nextLine().equals("django22")) {
+				if (readInput.equals("django22")) {
 					CodeOutput newCodeOutput = new Django22Output();
 					Context.setCodeOutput(newCodeOutput);
+					ProductionRules newProductionRules = new Django22ProductionRules();
+					Context.setProductionRules(newProductionRules);
 				}
 			}
 			if (line.contains(Range.tagRangeStart)) {

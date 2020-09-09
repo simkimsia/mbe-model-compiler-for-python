@@ -2,7 +2,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class PythonOutput extends CodeOutput {
+public class Python37Output extends CodeOutput {
 	// General description
 	// Model compiler
 	// This is a helper class to manage indentation in generated code
