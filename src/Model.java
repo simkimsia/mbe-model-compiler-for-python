@@ -54,9 +54,13 @@ public class Model {
 
 	// Static (class) variables
 
-	// none
+	private static String target = null;
 
 	// Static (class) methods
+
+	public static String target() {
+		return target;
+	}
 
 	public static Model parseModel() {
 		// requires
@@ -94,19 +98,9 @@ public class Model {
 				newModel.setIncludePackageName(JALInput.nextLine().equals("true"));
 			}
 			if (line.contains(Model.tagLanguageFrameworkOutput)) {
-				String readInput = JALInput.nextLine();
-				if (readInput.equals("python37")) {
-					CodeOutput newCodeOutput = new Python37Output();
-					Context.setCodeOutput(newCodeOutput);
-					ProductionRules newProductionRules = new Python37ProductionRules();
-					Context.setProductionRules(newProductionRules);
-				}
-				if (readInput.equals("django22")) {
-					CodeOutput newCodeOutput = new Django22Output();
-					Context.setCodeOutput(newCodeOutput);
-					ProductionRules newProductionRules = new Django22ProductionRules();
-					Context.setProductionRules(newProductionRules);
-				}
+				target = JALInput.nextLine().trim();
+				Context.setTarget(target);
+				Context.setCodeOutput(codeOutputFactory());
 			}
 			if (line.contains(Range.tagRangeStart)) {
 				Range newRange = Range.parseRange();
@@ -122,6 +116,20 @@ public class Model {
 		}
 		Context.clearModel();
 		return newModel;
+	}
+
+	public static CodeOutput codeOutputFactory() {
+		// requires
+		// none
+		// guarantees
+		// returns an instance of the right subclass of the abstract class CodeOutput
+		if (target.equals("python37")) {
+			return new Python37Output();
+		}
+		if (target.equals("django22")) {
+			return new Django22Output();
+		}
+		return null;
 	}
 
 	// Instance variables

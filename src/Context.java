@@ -59,7 +59,7 @@ public class Context {
 	private static Association associationContext;
 	private static AssociationParticipation associationParticipationContext;
 	private static CodeOutput codeOutputContext;
-	private static ProductionRules productionRulesContext;
+	private static String targetContext;
 
 	// Static (class) methods
 
@@ -131,6 +131,16 @@ public class Context {
 		// guarantees
 		// a reference to the CodeOutput being compiled is returned
 		return codeOutputContext;
+	}
+
+	public static String target() {
+		// description
+		// returns the target
+		// requires
+		// none
+		// guarantees
+		// a reference to the CodeOutput being compiled is returned
+		return targetContext;
 	}
 
 	public static void setModel(Model aModel) {
@@ -263,14 +273,14 @@ public class Context {
 		codeOutputContext = aCodeOutput;
 	}
 
-	public static void setProductionRules(ProductionRules aProductionRules) {
+	public static void setTarget(String target) {
 		// description
-		// sets the ProductionRules context
+		// sets the CodeOutput context
 		// requires
-		// aProductionRules <> null
+		// aCodeOutput <> null
 		// guarantees
-		// productionRulesContext == aProductionRules
-		productionRulesContext = aProductionRules;
+		// codeOutputContext == aCodeOutput
+		targetContext = target;
 	}
 
 	// Instance variables
