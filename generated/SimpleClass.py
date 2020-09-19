@@ -6,7 +6,7 @@ from typing import ClassVar, List
 
 class SimpleClass:
 
-    # generated 2020/09/11 21:31:57 by JAL open model compiler v5.3
+    # generated 2020/09/17 15:25:39 by JAL open model compiler v5.3
     
     
     # Class description

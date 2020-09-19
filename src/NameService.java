@@ -180,6 +180,7 @@ public class NameService {
 		// 3) turns text between @c and @ into a class level name
 		// 4) turns text between @e and @ into an enum name
 		// 5) turns text between @a and @ into an private instance attribute e.g.
+		// 6) turns text between @/ and /@ literally without any replacements
 		// `self._<the_attribute>`
 		// requires
 		// originalString <> null
@@ -187,14 +188,46 @@ public class NameService {
 		// guarantees
 		// returns a re-formatted originalString, as a String
 		Character theChar;
+		Character theNextChar;
 		String formattedString = new String();
 		int atSignCount = 0;
-		for (int charIndex = 0; charIndex < originalString.length(); charIndex++) {
+		int originalStringLength = originalString.length();
+		boolean startEscapeLiteralAtSlash = false;
+		int indexAfterAtSlash = 0;
+		boolean endEscapeLiteralSlashAt = false;
+		int indexBeforeSlashAt = 0;
+		for (int charIndex = 0; charIndex < originalStringLength; charIndex++) {
 			theChar = originalString.charAt(charIndex);
+			theNextChar = originalString.charAt(charIndex);
+			if (charIndex + 1 < originalStringLength) {
+				theNextChar = originalString.charAt(charIndex + 1);
+			}
 			if (theChar == '@') {
 				atSignCount++;
 			}
+			if (theChar == '@' && theNextChar == '/') {
+				startEscapeLiteralAtSlash = true;
+				indexAfterAtSlash = charIndex + 2;
+			}
+			if (theChar == '/' && theNextChar == '@') {
+				indexBeforeSlashAt = charIndex - 1;
+				endEscapeLiteralSlashAt = true;
+			}
 		}
+		boolean escapeLiteralExists = startEscapeLiteralAtSlash && endEscapeLiteralSlashAt;
+		boolean formattedFailed = startEscapeLiteralAtSlash ^ endEscapeLiteralSlashAt;
+		if (escapeLiteralExists) {
+			return originalString.substring(indexAfterAtSlash, indexBeforeSlashAt).trim();
+		}
+		if (formattedFailed) {
+			System.out.println();
+			System.out.println("****** ERROR in action language statement! Unbalanced '@/' in statement ******");
+			System.out.println("Class = " + Context.mMClass().name() + ", statement: " + originalString);
+			System.out.println();
+			Context.codeOutput().incrementErrorCount();
+			return formattedString;
+		}
+
 		if ((atSignCount % 2) == 0) {
 			String temporaryString;
 			int charIndex = 0;

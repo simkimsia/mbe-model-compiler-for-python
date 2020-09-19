@@ -6,7 +6,7 @@ from typing import ClassVar, List
 
 class HelloWorld:
 
-    # generated 2020/09/07 21:29:55 by JAL open model compiler v5.3
+    # generated 2020/09/19 17:49:43 by JAL open model compiler v5.3
     
     
     # Class description
@@ -113,7 +113,7 @@ class HelloWorld:
 
     # PIM Overlay helper code
     
-    
+    @staticmethod
     def main():
         """
         Just a way to print lines
